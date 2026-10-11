@@ -3,18 +3,29 @@
   "slug": "mesh-kol-yom-khenaqa",
   "status": "open",
   "type": "live-workshop",
-  "audienceAge": { "min": 1, "max": 4 },
+  "audienceAge": {
+    "min": 1,
+    "max": 4
+  },
   "instructor": "shereen-gendy",
-  "seats": { "limited": true, "total": null, "left": null },
-
+  "seats": {
+    "limited": true,
+    "total": null,
+    "left": null
+  },
   "schedule": {
     "platform": "Zoom",
     "sessions": [
-      { "start": "2026-11-09T20:00:00+02:00", "end": "2026-11-09T21:30:00+02:00" },
-      { "start": "2026-11-11T20:00:00+02:00", "end": "2026-11-11T21:30:00+02:00" }
+      {
+        "start": "2026-11-09T20:00:00+02:00",
+        "end": "2026-11-09T21:30:00+02:00"
+      },
+      {
+        "start": "2026-11-11T20:00:00+02:00",
+        "end": "2026-11-11T21:30:00+02:00"
+      }
     ]
   },
-
   "pricing": {
     "currency": "EGP",
     "tiers": [
@@ -23,17 +34,22 @@
         "amount": 1200,
         "_todo": "TODO: confirm the real early-bird end date with the client",
         "until": "2026-11-01T23:59:59+02:00",
-        "label": { "ar": "سعر الحجز المبكر", "en": "Early-bird price" }
+        "label": {
+          "ar": "سعر الحجز المبكر",
+          "en": "Early-bird price"
+        }
       },
       {
         "id": "regular",
         "amount": 1700,
         "until": null,
-        "label": { "ar": "السعر العادي", "en": "Regular price" }
+        "label": {
+          "ar": "السعر العادي",
+          "en": "Regular price"
+        }
       }
     ]
   },
-
   "seo": {
     "ar": {
       "title": "مش كل يوم خناقة! ورشة للتعامل مع العند ونوبات الغضب عند الأطفال",
@@ -44,17 +60,25 @@
       "description": "A live Zoom workshop for mothers of children aged 1–4 with certified parenting coach Shereen Gendy. Understand whining, defiance and tantrums and respond calmly and firmly. Nov 9 & 11. Early-bird price available."
     }
   },
-
   "content": {
     "ar": {
       "name": "مش كل يوم خناقة!",
       "kicker": "ورشة أونلاين لأمهات الأطفال من سنة لـ٤ سنين",
       "tagline": "من الزن والعند لنوبات الغضب… افهمي طفلك واتعاملي بثبات وهدوء",
-      "hero_words": ["لأ!", "مش عايز!", "لأ!"],
-
+      "hero_words": [
+        "لأ!",
+        "مش عايز!",
+        "لأ!"
+      ],
       "pain": {
         "title": "كل يوم معركة؟",
-        "battles": ["اللبس", "الأكل", "قفل الموبايل", "الخروج من البيت", "وقت النوم"],
+        "battles": [
+          "اللبس",
+          "الأكل",
+          "قفل الموبايل",
+          "الخروج من البيت",
+          "وقت النوم"
+        ],
         "paragraphs": [
           "وبتحسي إن كلمة «لأ» بقت أكتر كلمة بتسمعيها من طفلك؟ مرة يعيط ويصرخ عشان حاجة رفضتيها، ومرة يرفض يعمل أي حاجة طلبتيها منه، وممكن موقف بسيط جدًا يقلب اليوم كله بخناقة.",
           "ومع تكرار المواقف دي، بتلاقي نفسك بتفقدي أعصابك، صوتك بيعلى، وبعدها تحسي بالذنب وتسألي نفسك: هو ليه كل حاجة بقت صعبة كده؟!"
@@ -63,7 +87,6 @@
         "insight": "سن سنة لـ٤ سنين فيه تغيّرات كبيرة في نمو الطفل، ورغبته في الاستقلال بتزيد، لكن لسه قدرته على التعبير عن مشاعره والتحكم في انفعالاته محدودة. وده مش معناه إنك تسيبيه يعمل اللي هو عايزه، ولا إنك تدخلي معاه في معركة على كل حاجة.",
         "promise": "في ورشة «مش كل يوم خناقة!» هتفهمي إيه اللي ورا الزن والعند ونوبات الغضب، وهتتعلمي أدوات عملية تساعدك تتعاملي مع المواقف اليومية، وتحطي حدود واضحة لطفلك من غير صراخ مستمر ولا استسلام لكل طلباته."
       },
-
       "audience": {
         "title": "الورشة دي ليكي لو إنتِ الأم اللي…",
         "items": [
@@ -75,58 +98,123 @@
           "عايزة تعرفي تتصرفي إزاي بدل ما تجربي نصايح متناقضة من كل حد."
         ]
       },
-
       "curriculum": {
         "title": "هتتعلمي إيه في الورشة؟",
         "intro": "٨ محاور، من فهم سلوك طفلك لحد التطبيق على مواقف حقيقية من يومك.",
         "items": [
-          { "title": "تفهمي ليه طفلك بيعمل كده", "body": "هتعرفي ليه بيقول «لأ» وبيصرخ، وإزاي تفرّقي بين نوبة محتاجة احتواء وسلوك محتاج حدود ثابتة." },
-          { "title": "تقللي نوبات الغضب قبل ما تبدأ", "body": "٧ أدوات عملية، منها الروتين الثابت، والتمهيد قبل الانتقال من نشاط للتاني، وتقديم الاختيارات، وطريقة طلب تشجّع طفلك على التعاون." },
-          { "title": "تعرفي تتصرفي وقت نوبة الغضب", "body": "خطوات واضحة وقت الصريخ والعياط، وإمتى تقربي من طفلك وإمتى تدي له مساحة، وإزاي تساعديه يهدى." },
-          { "title": "تتعاملي مع العند والزن من غير معارك", "body": "إمتى تتمسكي بالحدود وإمتى تدي اختيارات، وإزاي تتعاملي مع الزن من غير ما يتحول لطريقة يغيّر بيها طفلك قرارك كل مرة." },
-          { "title": "تفهمي إيه اللي بيفقدك أعصابك", "body": "تلاحظي علامات الغضب عندك، وتفهمي الأفكار والمواقف اللي بتزود عصبيتك، وتستخدمي خطوات عملية تهديكي قبل ما الموقف يكبر." },
-          { "title": "تساعدي طفلك يبني شخصية قوية ويحترم الحدود", "body": "تدعمي استقلاله وتسمعي رأيه من غير ما تتنازلي عن حدودك، ويتعلم إن من حقه يعبّر عن نفسه، وفي نفس الوقت فيه قواعد لازم يحترمها." },
-          { "title": "تتعاملي مع ضغط وكلام الناس", "body": "من الأب للجدة والقرايب، لحد التعليقات في الشارع: توضحي طريقتك في التربية وتثبتي على حدودك بهدوء، من غير ما كل اختلاف يتحول لخناقة." },
-          { "title": "تطبّقي على مواقف حقيقية من يومك", "body": "هنناقش مواقف وأسئلة الأمهات، ونطبّق الأدوات على تحديات يومية زي وقت الشاشات والضرب والغيرة بين الإخوات، حسب الوقت المتاح." }
+          {
+            "title": "تفهمي ليه طفلك بيعمل كده",
+            "body": "هتعرفي ليه بيقول «لأ» وبيصرخ، وإزاي تفرّقي بين نوبة محتاجة احتواء وسلوك محتاج حدود ثابتة."
+          },
+          {
+            "title": "تقللي نوبات الغضب قبل ما تبدأ",
+            "body": "٧ أدوات عملية، منها الروتين الثابت، والتمهيد قبل الانتقال من نشاط للتاني، وتقديم الاختيارات، وطريقة طلب تشجّع طفلك على التعاون."
+          },
+          {
+            "title": "تعرفي تتصرفي وقت نوبة الغضب",
+            "body": "خطوات واضحة وقت الصريخ والعياط، وإمتى تقربي من طفلك وإمتى تدي له مساحة، وإزاي تساعديه يهدى."
+          },
+          {
+            "title": "تتعاملي مع العند والزن من غير معارك",
+            "body": "إمتى تتمسكي بالحدود وإمتى تدي اختيارات، وإزاي تتعاملي مع الزن من غير ما يتحول لطريقة يغيّر بيها طفلك قرارك كل مرة."
+          },
+          {
+            "title": "تفهمي إيه اللي بيفقدك أعصابك",
+            "body": "تلاحظي علامات الغضب عندك، وتفهمي الأفكار والمواقف اللي بتزود عصبيتك، وتستخدمي خطوات عملية تهديكي قبل ما الموقف يكبر."
+          },
+          {
+            "title": "تساعدي طفلك يبني شخصية قوية ويحترم الحدود",
+            "body": "تدعمي استقلاله وتسمعي رأيه من غير ما تتنازلي عن حدودك، ويتعلم إن من حقه يعبّر عن نفسه، وفي نفس الوقت فيه قواعد لازم يحترمها."
+          },
+          {
+            "title": "تتعاملي مع ضغط وكلام الناس",
+            "body": "من الأب للجدة والقرايب، لحد التعليقات في الشارع: توضحي طريقتك في التربية وتثبتي على حدودك بهدوء، من غير ما كل اختلاف يتحول لخناقة."
+          },
+          {
+            "title": "تطبّقي على مواقف حقيقية من يومك",
+            "body": "هنناقش مواقف وأسئلة الأمهات، ونطبّق الأدوات على تحديات يومية زي وقت الشاشات والضرب والغيرة بين الإخوات، حسب الوقت المتاح."
+          }
         ]
       },
-
       "includes": {
-        "title": "هتحصلي على إيه؟",
+        "title": "إيه اللي هتحصلي عليه مع ورشة «مش كل يوم خناقة!»؟",
         "items": [
-          { "icon": "live", "title": "لقاءين Live على Zoom", "body": "لقاءين تفاعليين، مدة كل لقاء ٩٠ دقيقة، نفهم فيهم سلوك طفلك ونتعلم أدوات عملية للتعامل مع الزن والعند ونوبات الغضب." },
-          { "icon": "pdf", "title": "ملف PDF بأهم الأدوات", "body": "ترجعي له بعد الورشة، يساعدك تفتكري الأدوات وتطبّقيها في المواقف اليومية مع طفلك." },
-          { "icon": "rec", "title": "تسجيلات الورشة", "body": "هتوصلك التسجيلات خلال ٢٤ ساعة، عشان تقدري ترجعي للمحتوى وقت ما تحتاجي." },
-          { "icon": "gift", "title": "خصم ٣٠٪ على جلسة فردية", "body": "خصم على جلسة استشارية فردية مع شيرين، صالح لمدة شهر بعد الورشة، نناقش فيها تحدياتك الخاصة مع طفلك." }
+          {
+            "icon": "live",
+            "title": "لقاءين Live على Zoom",
+            "body": "لقاءين تفاعليين، مدة كل لقاء ٩٠ دقيقة، نفهم فيهم سلوك طفلك ونتعلم أدوات عملية للتعامل مع الزن والعند ونوبات الغضب."
+          },
+          {
+            "icon": "pdf",
+            "title": "PDF بأهم الأدوات",
+            "body": "ملف PDF ترجعي له بعد الورشة، يساعدك تفتكري الأدوات وتطبّقيها في المواقف اليومية مع طفلك."
+          },
+          {
+            "icon": "rec",
+            "title": "تسجيلات الورشة",
+            "body": "هتوصلك تسجيلات الورشة خلال ٢٤ ساعة، عشان تقدري ترجعي للمحتوى وقت ما تحتاجي."
+          },
+          {
+            "icon": "gift",
+            "title": "خصم ٣٠٪ على جلسة فردية معايا",
+            "body": "بعد الورشة، هتحصلي على خصم ٣٠٪ على جلسة استشارية فردية معايا (الخصم صالح لمدة شهر بعد الورشة)، نقدر فيها نناقش تحدياتك الخاصة مع طفلك ونشتغل على خطوات عملية تناسب احتياجاتك واحتياجاته."
+          }
         ],
         "seats_note": "الورشة مخصصة لعدد محدود، عشان نقدر نناقش الأسئلة والمواقف العملية ونستفيد من تجارب بعض."
       },
-
       "faq": [
-        { "q": "الورشة مناسبة لمين؟", "a": "لكل أم عندها طفل من سن سنة لـ٤ سنين، وعايزة تفهم سلوكه وتتعلم تتعامل مع الزن والعند ونوبات الغضب بطريقة عملية." },
-        { "q": "هل لازم أحضر اللقاءين Live؟", "a": "الورشة بتتقدم في لقاءين Live على Zoom، ولو احتجتي ترجعي للمحتوى بعد كده، هتوصلك التسجيلات خلال ٢٤ ساعة." },
-        { "q": "هل الورشة هتخلّصني من نوبات الغضب والعند؟", "a": "الهدف مش إننا نلغي نوبات الغضب تمامًا، لكن إنك تفهمي أسبابها، وتتعلمي تقللي تكرارها وتتعاملي معاها بشكل أفضل، مع الحفاظ على حدود واضحة لطفلك." },
-        { "q": "هل هقدر أسأل عن المواقف اللي بتحصل مع طفلي؟", "a": "أيوه، فيه ٢٠ دقيقة في اللقاء التاني للأسئلة، وفرصة لمناقشة المواقف العملية خلال الورشة." },
-        { "q": "إيه نظام خصم الجلسة الفردية؟", "a": "بعد حضور الورشة، هتحصلي على خصم ٣٠٪ على جلسة فردية مع شيرين، صالح لمدة شهر بعد الورشة، لو حابة تشتغلي بشكل أعمق على تحدياتك الخاصة مع طفلك." },
-        { "q": "هل ممكن أسترد فلوسي لو غيرت رأيي؟", "a": "بعد تأكيد الحجز والدفع، لا يمكن استرداد المبلغ. لكن لو حصل ظرف قبل الورشة، ممكن تنقلي مكانك للورشة الجاية." },
-        { "q": "إزاي أدفع وأأكد حجزي؟", "a": "الدفع عن طريق InstaPay، باللينك أو بمسح الـQR code. بعد التحويل ابعتي صورة التحويل على واتساب، ومكانك بيتأكد بعد إتمام الدفع." }
+        {
+          "q": "الورشة مناسبة لمين؟",
+          "a": "لكل أم عندها طفل من سن سنة لـ٤ سنين، وعايزة تفهم سلوكه وتتعلم تتعامل مع الزن والعند ونوبات الغضب بطريقة عملية."
+        },
+        {
+          "q": "هل لازم أحضر اللقاءين Live؟",
+          "a": "الورشة بتتقدم في لقاءين Live على Zoom، ولو احتجتي ترجعي للمحتوى بعد كده، هتوصلك التسجيلات خلال ٢٤ ساعة."
+        },
+        {
+          "q": "هل الورشة هتخلّصني من نوبات الغضب والعند؟",
+          "a": "الهدف مش إننا نلغي نوبات الغضب تمامًا، لكن إنك تفهمي أسبابها، وتتعلمي تقللي تكرارها وتتعاملي معاها بشكل أفضل، مع الحفاظ على حدود واضحة لطفلك."
+        },
+        {
+          "q": "هل هقدر أسأل عن المواقف اللي بتحصل مع طفلي؟",
+          "a": "أيوه، فيه ٢٠ دقيقة في اللقاء التاني للأسئلة، وفرصة لمناقشة المواقف العملية خلال الورشة."
+        },
+        {
+          "q": "إيه نظام خصم الجلسة الفردية؟",
+          "a": "بعد حضور الورشة، هتحصلي على خصم ٣٠٪ على جلسة فردية مع شيرين، صالح لمدة شهر بعد الورشة، لو حابة تشتغلي بشكل أعمق على تحدياتك الخاصة مع طفلك."
+        },
+        {
+          "q": "هل ممكن أسترد فلوسي لو غيرت رأيي؟",
+          "a": "بعد تأكيد الحجز والدفع، لا يمكن استرداد المبلغ. لكن لو حصل ظرف قبل الورشة، ممكن تنقلي مكانك للورشة الجاية."
+        },
+        {
+          "q": "إزاي أدفع وأأكد حجزي؟",
+          "a": "الدفع عن طريق InstaPay، باللينك أو بمسح الـQR code. بعد التحويل ابعتي صورة التحويل على واتساب، ومكانك بيتأكد بعد إتمام الدفع."
+        }
       ],
-
       "final_cta": {
         "title": "مستعدة تقللي الخناقات اليومية وتفهمي طفلك أكتر؟",
         "body": "احجزي مكانك في ورشة «مش كل يوم خناقة!» واستفيدي من سعر الحجز المبكر قبل ما ينتهي. عدد الأماكن محدود."
       }
     },
-
     "en": {
       "name": "Not Every Day a Battle!",
       "kicker": "A live online workshop for mothers of children aged 1–4",
       "tagline": "From whining and defiance to full-blown tantrums: understand your child and respond calmly and firmly.",
-      "hero_words": ["No!", "I don't want to!", "No!"],
-
+      "hero_words": [
+        "No!",
+        "I don't want to!",
+        "No!"
+      ],
       "pain": {
         "title": "Is every day a battle?",
-        "battles": ["Getting dressed", "Mealtimes", "Turning off the phone", "Leaving the house", "Bedtime"],
+        "battles": [
+          "Getting dressed",
+          "Mealtimes",
+          "Turning off the phone",
+          "Leaving the house",
+          "Bedtime"
+        ],
         "paragraphs": [
           "Does it feel like “no” is the word you hear most from your child? One minute they're crying and screaming because you said no, the next they refuse to do anything you ask, and one small moment can turn the whole day into a fight.",
           "As it keeps happening, you lose your temper, your voice gets louder, and then the guilt kicks in and you ask yourself: why has everything become so hard?"
@@ -135,7 +223,6 @@
         "insight": "Between ages 1 and 4, children go through huge developmental changes. Their drive for independence grows fast, while their ability to express feelings and control their reactions is still limited. That doesn't mean letting them do whatever they want, or turning everything into a battle.",
         "promise": "In “Not Every Day a Battle!” you'll understand what sits behind the whining, defiance and tantrums, and learn practical tools for everyday moments, so you can set clear limits without constant shouting or giving in to every demand."
       },
-
       "audience": {
         "title": "This workshop is for you if you…",
         "items": [
@@ -147,43 +234,100 @@
           "Want a clear way to respond instead of conflicting advice from everyone."
         ]
       },
-
       "curriculum": {
         "title": "What you'll learn",
         "intro": "Eight parts, from understanding your child's behaviour to practising on real moments from your day.",
         "items": [
-          { "title": "Understand why your child does this", "body": "Why they say “no” and scream, and how to tell a meltdown that needs comfort from behaviour that needs a firm limit." },
-          { "title": "Prevent tantrums before they start", "body": "Seven practical tools, including steady routines, preparing for transitions, offering choices, and asking in a way that invites cooperation." },
-          { "title": "Know what to do during a tantrum", "body": "Clear steps for the screaming and crying: when to move closer, when to give space, and how to help your child calm down." },
-          { "title": "Handle defiance and whining without fights", "body": "When to hold a limit and when to offer a choice, and how to stop whining from becoming the way your child changes your mind." },
-          { "title": "Understand what makes you lose your temper", "body": "Notice your own anger signals, the thoughts and situations that raise your stress, and practical steps to calm yourself before things escalate." },
-          { "title": "Raise a confident child who respects limits", "body": "Support their independence and hear their opinion without giving up your limits, so they learn they can speak up and still follow the rules." },
-          { "title": "Deal with pressure from people around you", "body": "From dad and grandma to relatives and comments in the street: explain your parenting approach and hold your limits calmly." },
-          { "title": "Apply it to real situations from your day", "body": "We'll discuss mothers' real questions and apply the tools to daily challenges like screen time, hitting and sibling jealousy, as time allows." }
+          {
+            "title": "Understand why your child does this",
+            "body": "Why they say “no” and scream, and how to tell a meltdown that needs comfort from behaviour that needs a firm limit."
+          },
+          {
+            "title": "Prevent tantrums before they start",
+            "body": "Seven practical tools, including steady routines, preparing for transitions, offering choices, and asking in a way that invites cooperation."
+          },
+          {
+            "title": "Know what to do during a tantrum",
+            "body": "Clear steps for the screaming and crying: when to move closer, when to give space, and how to help your child calm down."
+          },
+          {
+            "title": "Handle defiance and whining without fights",
+            "body": "When to hold a limit and when to offer a choice, and how to stop whining from becoming the way your child changes your mind."
+          },
+          {
+            "title": "Understand what makes you lose your temper",
+            "body": "Notice your own anger signals, the thoughts and situations that raise your stress, and practical steps to calm yourself before things escalate."
+          },
+          {
+            "title": "Raise a confident child who respects limits",
+            "body": "Support their independence and hear their opinion without giving up your limits, so they learn they can speak up and still follow the rules."
+          },
+          {
+            "title": "Deal with pressure from people around you",
+            "body": "From dad and grandma to relatives and comments in the street: explain your parenting approach and hold your limits calmly."
+          },
+          {
+            "title": "Apply it to real situations from your day",
+            "body": "We'll discuss mothers' real questions and apply the tools to daily challenges like screen time, hitting and sibling jealousy, as time allows."
+          }
         ]
       },
-
       "includes": {
-        "title": "What's included",
+        "title": "What you get with “Not Every Day a Battle!”",
         "items": [
-          { "icon": "live", "title": "Two live sessions on Zoom", "body": "Two interactive sessions of 90 minutes each, focused on understanding your child and practical tools for whining, defiance and tantrums." },
-          { "icon": "pdf", "title": "A PDF of the key tools", "body": "A reference to return to after the workshop, so you remember the tools and use them in everyday moments." },
-          { "icon": "rec", "title": "Workshop recordings", "body": "Recordings arrive within 24 hours, so you can revisit the content whenever you need it." },
-          { "icon": "gift", "title": "30% off a private session", "body": "A discount on a one-to-one consultation with Shereen, valid for one month after the workshop, to work on your own challenges." }
+          {
+            "icon": "live",
+            "title": "Two live sessions on Zoom",
+            "body": "Two interactive sessions of 90 minutes each, where we understand your child's behaviour and learn practical tools for whining, defiance and tantrums."
+          },
+          {
+            "icon": "pdf",
+            "title": "A PDF of the key tools",
+            "body": "A PDF to come back to after the workshop, to help you remember the tools and use them in everyday moments with your child."
+          },
+          {
+            "icon": "rec",
+            "title": "Workshop recordings",
+            "body": "You'll receive the workshop recordings within 24 hours, so you can return to the content whenever you need it."
+          },
+          {
+            "icon": "gift",
+            "title": "30% off a private session with me",
+            "body": "After the workshop, you'll get 30% off a one-to-one consultation with me (valid for one month after the workshop), where we can discuss your own challenges with your child and work on practical steps that fit your needs and theirs."
+          }
         ],
         "seats_note": "Seats are limited so there's time for questions, real situations and learning from each other."
       },
-
       "faq": [
-        { "q": "Who is this workshop for?", "a": "Any mother of a child aged 1 to 4 who wants to understand their behaviour and learn practical ways to handle whining, defiance and tantrums." },
-        { "q": "Do I have to attend both sessions live?", "a": "The workshop runs as two live Zoom sessions. If you need to revisit the content later, you'll receive the recordings within 24 hours." },
-        { "q": "Will the workshop end tantrums and defiance?", "a": "The goal isn't to eliminate tantrums completely. It's to understand why they happen, reduce how often they happen, and handle them better while keeping clear limits." },
-        { "q": "Can I ask about situations with my own child?", "a": "Yes. There are 20 minutes for questions in the second session, plus room to discuss real situations during the workshop." },
-        { "q": "How does the private-session discount work?", "a": "After attending, you get 30% off a one-to-one session with Shereen, valid for one month after the workshop." },
-        { "q": "Can I get a refund if I change my mind?", "a": "Payments are non-refundable once your booking is confirmed. If something comes up before the workshop, you can move your seat to the next one." },
-        { "q": "How do I pay and confirm my seat?", "a": "Pay with InstaPay using the payment link or by scanning the QR code, then send a screenshot of the transfer on WhatsApp. Your seat is confirmed once payment is received." }
+        {
+          "q": "Who is this workshop for?",
+          "a": "Any mother of a child aged 1 to 4 who wants to understand their behaviour and learn practical ways to handle whining, defiance and tantrums."
+        },
+        {
+          "q": "Do I have to attend both sessions live?",
+          "a": "The workshop runs as two live Zoom sessions. If you need to revisit the content later, you'll receive the recordings within 24 hours."
+        },
+        {
+          "q": "Will the workshop end tantrums and defiance?",
+          "a": "The goal isn't to eliminate tantrums completely. It's to understand why they happen, reduce how often they happen, and handle them better while keeping clear limits."
+        },
+        {
+          "q": "Can I ask about situations with my own child?",
+          "a": "Yes. There are 20 minutes for questions in the second session, plus room to discuss real situations during the workshop."
+        },
+        {
+          "q": "How does the private-session discount work?",
+          "a": "After attending, you get 30% off a one-to-one session with Shereen, valid for one month after the workshop."
+        },
+        {
+          "q": "Can I get a refund if I change my mind?",
+          "a": "Payments are non-refundable once your booking is confirmed. If something comes up before the workshop, you can move your seat to the next one."
+        },
+        {
+          "q": "How do I pay and confirm my seat?",
+          "a": "Pay with InstaPay using the payment link or by scanning the QR code, then send a screenshot of the transfer on WhatsApp. Your seat is confirmed once payment is received."
+        }
       ],
-
       "final_cta": {
         "title": "Ready for fewer daily battles and a better understanding of your child?",
         "body": "Book your seat in “Not Every Day a Battle!” and get the early-bird price before it ends. Seats are limited."
