@@ -1,6 +1,7 @@
 import { icons } from './icons.mjs';
 import { heroArt } from './scribble.mjs';
 import { esc, fmt, structuredData } from './helpers.mjs';
+import { COUNTRIES, DEFAULT_COUNTRY, countryByIso } from '../assets/js/data/countries.js';
 
 /**
  * Renders a full course landing page.
@@ -417,7 +418,7 @@ function stickyBar(ctx) {
 
 /* ---------- checkout dialog (UI shell; logic in assets/js/checkout.js) ---------- */
 function checkoutDialog(ctx) {
-  const { t, c } = ctx;
+  const { t, c, lang } = ctx;
   const k = t.checkout;
   return `<dialog class="checkout" id="checkout" aria-labelledby="co-title">
   <div class="co-inner">
@@ -437,13 +438,20 @@ function checkoutDialog(ctx) {
     <form class="co-step" data-step="1" id="co-form" novalidate>
       <div class="field">
         <label for="co-name">${k.name}</label>
-        <input id="co-name" name="name" type="text" autocomplete="name" placeholder="${esc(k.namePh)}" required>
-        <p class="err" id="co-name-err" hidden>${k.errName}</p>
+        <input id="co-name" name="name" type="text" autocomplete="name" maxlength="60" placeholder="${esc(k.namePh)}" required aria-describedby="co-name-err">
+        <p class="err" id="co-name-err" aria-live="polite" hidden></p>
       </div>
       <div class="field">
         <label for="co-phone">${k.phone}</label>
-        <input id="co-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" dir="ltr" placeholder="${k.phonePh}" required>
-        <p class="err" id="co-phone-err" hidden>${k.errPhone}</p>
+        <div class="phone-group" dir="ltr">
+          <label class="sr" for="co-country">${k.country}</label>
+          <select id="co-country" name="country" autocomplete="country">
+            ${COUNTRIES.map((c) => `<option value="${c.iso}"${c.iso === DEFAULT_COUNTRY ? ' selected' : ''}>${c.flag} ${esc(c[lang])}${c.dial ? ` +${c.dial}` : ''}</option>`).join('')}
+          </select>
+          <input id="co-phone" name="phone" type="tel" inputmode="numeric" pattern="[0-9]*" autocomplete="tel-national" placeholder="${countryByIso(DEFAULT_COUNTRY).ex.replace(/\D/g, '')}" required aria-describedby="co-phone-hint co-phone-err">
+        </div>
+        <p class="hint" id="co-phone-hint">${k.phoneHint}</p>
+        <p class="err" id="co-phone-err" aria-live="polite" hidden></p>
       </div>
       <fieldset class="field">
         <legend>${k.childAge}</legend>
@@ -454,7 +462,8 @@ function checkoutDialog(ctx) {
       </fieldset>
       <div class="field">
         <label for="co-email">${k.email}</label>
-        <input id="co-email" name="email" type="email" autocomplete="email" dir="ltr">
+        <input id="co-email" name="email" type="email" inputmode="email" autocomplete="email" maxlength="254" dir="ltr" placeholder="name@gmail.com" aria-describedby="co-email-err">
+        <p class="err" id="co-email-err" aria-live="polite" hidden></p>
       </div>
       <div class="co-summary">
         <span>${k.amount}</span>

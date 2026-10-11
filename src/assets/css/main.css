@@ -402,7 +402,21 @@ a { color: var(--calm); text-underline-offset: .2em; }
 .field input:focus { outline: none; border-color: var(--calm); box-shadow: 0 0 0 4px color-mix(in srgb, var(--calm) 20%, transparent); }
 .field input[aria-invalid="true"] { border-color: var(--crayon); }
 .field input[type="tel"], .field input[type="email"] { text-align: start; }
-[dir="rtl"] .field input[dir="ltr"] { text-align: right; }
+[dir="rtl"] .field input[type="email"] { text-align: right; }
+.ip-warn { padding: 12px 14px; border-radius: 12px; background: var(--sun-soft); font-size: var(--t-sm); display: grid; gap: 8px; }
+.ip-warn a { font-weight: 700; color: var(--calm); }
+.hint { color: var(--ink-soft); font-size: var(--t-xs); }
+.phone-group { display: flex; gap: 8px; min-width: 0; }
+.phone-group select {
+  flex: 0 0 auto; max-width: 46%; min-height: 50px; padding: 10px 10px; border-radius: 12px; border: 2px solid var(--line);
+  background: var(--paper); color: var(--ink); font: 500 var(--t-sm) var(--f-body); cursor: pointer;
+}
+.phone-group select:focus { outline: none; border-color: var(--calm); box-shadow: 0 0 0 4px color-mix(in srgb, var(--calm) 20%, transparent); }
+.phone-group input { flex: 1 1 auto; min-width: 0; }
+[dir="rtl"] .phone-group input[type="tel"] { text-align: left; }
+.field input.is-valid { border-color: color-mix(in srgb, var(--calm) 60%, var(--line)); }
+.err .link-btn { font-size: inherit; }
+.err bdi { white-space: nowrap; }
 .err { color: var(--crayon); font-size: var(--t-sm); font-weight: 600; }
 .chips { display: flex; flex-wrap: wrap; gap: 8px; }
 .chip input { position: absolute; opacity: 0; pointer-events: none; }

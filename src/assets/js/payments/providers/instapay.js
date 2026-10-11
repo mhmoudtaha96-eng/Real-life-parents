@@ -8,7 +8,7 @@ export const instapay = {
   label: (s) => s.instapay.label,
   hint: (s) => s.instapay.hint,
 
-  render({ order, config, strings, money }) {
+  render({ order, config, strings, money, whatsapp }) {
     const s = strings.instapay;
     const k = strings.checkout;
     const wrap = el('div', { class: 'ip' });
@@ -20,6 +20,16 @@ export const instapay = {
         'data-track': 'instapay_link',
       }, [el('span', {}, s.openLink), el('b', {}, money(order.total)), icon('external')]),
     );
+
+    // InstaPay needs an Egyptian bank account / wallet → offer another route to customers abroad
+    if (order.customer?.country && order.customer.country !== 'EG' && whatsapp) {
+      const msg = k.otherPaymentMsg.replace('{course}', order.lines.map((l) => l.name).join(' + '))
+        .replace('{ref}', order.ref).replace('{country}', order.customer.countryName);
+      wrap.prepend(el('div', { class: 'ip-warn', role: 'note' }, [
+        el('p', {}, k.outsideEgypt),
+        el('a', { href: `https://wa.me/${whatsapp}?text=${encodeURIComponent(msg)}`, target: '_blank', rel: 'noopener' }, k.askOtherPayment),
+      ]));
+    }
 
     if (config.qr) {
       wrap.append(el('div', { class: 'ip-qr' }, [

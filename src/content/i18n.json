@@ -6,7 +6,14 @@
     "langName": "العربية",
     "switchTo": "English",
     "skip": "تخطي إلى المحتوى",
-    "nav": { "learn": "المحتوى", "coach": "المدربة", "details": "المواعيد والسعر", "faq": "أسئلة شائعة", "menu": "القائمة", "close": "إغلاق" },
+    "nav": {
+      "learn": "المحتوى",
+      "coach": "المدربة",
+      "details": "المواعيد والسعر",
+      "faq": "أسئلة شائعة",
+      "menu": "القائمة",
+      "close": "إغلاق"
+    },
     "book": "احجزي مكانك",
     "bookShort": "احجزي",
     "seeDetails": "المواعيد والسعر",
@@ -14,7 +21,9 @@
     "earlyEndsIn": "الحجز المبكر بيخلص خلال",
     "earlyEnded": "انتهى الحجز المبكر",
     "insteadOf": "بدل",
-    "days": "يوم", "hours": "ساعة", "minutes": "دقيقة",
+    "days": "يوم",
+    "hours": "ساعة",
+    "minutes": "دقيقة",
     "limitedSeats": "أماكن محدودة",
     "sessionsLabel": "اللقاءات",
     "sessionN": "اللقاء",
@@ -33,9 +42,18 @@
     "after": "بعد انتهاء الحجز المبكر",
     "howTitle": "إزاي تحجزي؟",
     "howSteps": [
-      { "t": "اكتبي بياناتك", "b": "اسمك ورقم الواتساب وسن طفلك، عشان نبعتلك لينك Zoom والتسجيلات." },
-      { "t": "ادفعي بـ InstaPay", "b": "من لينك الدفع مباشرة أو امسحي الـQR code من تطبيق InstaPay." },
-      { "t": "ابعتي صورة التحويل", "b": "على واتساب بضغطة واحدة، ومكانك بيتأكد بعد إتمام الدفع." }
+      {
+        "t": "اكتبي بياناتك",
+        "b": "اسمك ورقم الواتساب وسن طفلك، عشان نبعتلك لينك Zoom والتسجيلات."
+      },
+      {
+        "t": "ادفعي بـ InstaPay",
+        "b": "من لينك الدفع مباشرة أو امسحي الـQR code من تطبيق InstaPay."
+      },
+      {
+        "t": "ابعتي صورة التحويل",
+        "b": "على واتساب بضغطة واحدة، ومكانك بيتأكد بعد إتمام الدفع."
+      }
     ],
     "faqTitle": "أسئلة شائعة",
     "moreCourses": "ورش وكورسات تانية",
@@ -53,12 +71,17 @@
       "phone": "رقم الواتساب",
       "phonePh": "01xxxxxxxxx",
       "childAge": "سن طفلك",
-      "childAgeOpts": ["أقل من سنة", "سنة", "سنتين", "٣ سنين", "٤ سنين", "أكبر من ٤"],
+      "childAgeOpts": [
+        "أقل من سنة",
+        "سنة",
+        "سنتين",
+        "٣ سنين",
+        "٤ سنين",
+        "أكبر من ٤"
+      ],
       "email": "الإيميل (اختياري)",
       "next": "كمّلي للدفع",
       "back": "رجوع",
-      "errName": "اكتبي اسمك.",
-      "errPhone": "اكتبي رقم واتساب صحيح، ١١ رقم يبدأ بـ01.",
       "errAge": "اختاري سن طفلك.",
       "orderRef": "رقم الحجز",
       "amount": "المبلغ",
@@ -71,7 +94,32 @@
       "copy": "نسخ",
       "copied": "اتنسخ",
       "close": "إغلاق",
-      "waMessage": "أهلًا، حجزت مكان في ورشة «{course}».\nرقم الحجز: {ref}\nالاسم: {name}\nالواتساب: {phone}\nسن الطفل: {age}\nالمبلغ: {amount}\nطريقة الدفع: {method}\nمرفق صورة التحويل."
+      "waMessage": "أهلًا، حجزت مكان في ورشة «{course}».\nرقم الحجز: {ref}\nالاسم: {name}\nالواتساب: {phone} ({country})\nسن الطفل: {age}\nالمبلغ: {amount}\nطريقة الدفع: {method}\nمرفق صورة التحويل.",
+      "country": "الدولة",
+      "phoneHint": "هنبعتلك لينك Zoom والتسجيلات على الرقم ده.",
+      "err": {
+        "name": {
+          "empty": "اكتبي اسمك.",
+          "digits": "الاسم مينفعش يكون فيه أرقام.",
+          "chars": "اكتبي الاسم بالحروف بس، من غير رموز أو إيموجي.",
+          "short": "الاسم قصير جدًا، اكتبي اسمك كامل.",
+          "long": "الاسم طويل جدًا، اكتبي اسمك الأول واسم العيلة بس."
+        },
+        "phone": {
+          "empty": "اكتبي رقم الواتساب.",
+          "chars": "اكتبي الرقم بالأرقام بس.",
+          "invalid": "الرقم ده مش صحيح لـ{country}. اكتبيه كده مثلًا: {ex}",
+          "needIntl": "اكتبي الرقم كامل بكود الدولة، مثال: {ex}"
+        },
+        "email": {
+          "invalid": "الإيميل ده مش صحيح. مثال: name@gmail.com",
+          "typo": "قصدك {email}؟"
+        }
+      },
+      "useSuggestion": "أيوه، صحّحه",
+      "outsideEgypt": "InstaPay بيشتغل بحسابات البنوك والمحافظ المصرية بس. لو مش معاكي حساب في مصر، كلمينا على واتساب ونبعتلك طريقة دفع تانية.",
+      "askOtherPayment": "اسألي عن طريقة دفع تانية",
+      "otherPaymentMsg": "أهلًا، عايزة أحجز في ورشة «{course}» ومش معايا InstaPay. رقم الحجز: {ref}. إيه طرق الدفع المتاحة من {country}؟"
     },
     "instapay": {
       "label": "InstaPay",
@@ -82,7 +130,10 @@
       "account": "باسم",
       "note": "اكتبي رقم الحجز في ملاحظة التحويل لو التطبيق سمح بكده."
     },
-    "card": { "label": "بطاقة بنكية", "hint": "قريبًا" }
+    "card": {
+      "label": "بطاقة بنكية",
+      "hint": "قريبًا"
+    }
   },
   "en": {
     "dir": "ltr",
@@ -91,7 +142,14 @@
     "langName": "English",
     "switchTo": "العربية",
     "skip": "Skip to content",
-    "nav": { "learn": "What you'll learn", "coach": "Your coach", "details": "Dates & price", "faq": "FAQ", "menu": "Menu", "close": "Close" },
+    "nav": {
+      "learn": "What you'll learn",
+      "coach": "Your coach",
+      "details": "Dates & price",
+      "faq": "FAQ",
+      "menu": "Menu",
+      "close": "Close"
+    },
     "book": "Book your seat",
     "bookShort": "Book",
     "seeDetails": "Dates & price",
@@ -99,7 +157,9 @@
     "earlyEndsIn": "Early-bird price ends in",
     "earlyEnded": "Early-bird price has ended",
     "insteadOf": "instead of",
-    "days": "days", "hours": "hrs", "minutes": "min",
+    "days": "days",
+    "hours": "hrs",
+    "minutes": "min",
     "limitedSeats": "Limited seats",
     "sessionsLabel": "Sessions",
     "sessionN": "Session",
@@ -118,9 +178,18 @@
     "after": "after the early-bird period",
     "howTitle": "How booking works",
     "howSteps": [
-      { "t": "Enter your details", "b": "Your name, WhatsApp number and your child's age, so we can send your Zoom link and recordings." },
-      { "t": "Pay with InstaPay", "b": "Use the payment link directly, or scan the QR code in the InstaPay app." },
-      { "t": "Send your transfer screenshot", "b": "One tap opens WhatsApp. Your seat is confirmed once payment is received." }
+      {
+        "t": "Enter your details",
+        "b": "Your name, WhatsApp number and your child's age, so we can send your Zoom link and recordings."
+      },
+      {
+        "t": "Pay with InstaPay",
+        "b": "Use the payment link directly, or scan the QR code in the InstaPay app."
+      },
+      {
+        "t": "Send your transfer screenshot",
+        "b": "One tap opens WhatsApp. Your seat is confirmed once payment is received."
+      }
     ],
     "faqTitle": "Questions",
     "moreCourses": "More workshops and courses",
@@ -138,12 +207,17 @@
       "phone": "WhatsApp number",
       "phonePh": "01xxxxxxxxx",
       "childAge": "Your child's age",
-      "childAgeOpts": ["Under 1", "1 year", "2 years", "3 years", "4 years", "Over 4"],
+      "childAgeOpts": [
+        "Under 1",
+        "1 year",
+        "2 years",
+        "3 years",
+        "4 years",
+        "Over 4"
+      ],
       "email": "Email (optional)",
       "next": "Continue to payment",
       "back": "Back",
-      "errName": "Enter your name.",
-      "errPhone": "Enter a valid WhatsApp number (11 digits starting with 01, or international format).",
       "errAge": "Choose your child's age.",
       "orderRef": "Booking ref",
       "amount": "Amount",
@@ -156,7 +230,32 @@
       "copy": "Copy",
       "copied": "Copied",
       "close": "Close",
-      "waMessage": "Hi, I've booked a seat in “{course}”.\nBooking ref: {ref}\nName: {name}\nWhatsApp: {phone}\nChild's age: {age}\nAmount: {amount}\nPayment method: {method}\nTransfer screenshot attached."
+      "waMessage": "Hi, I've booked a seat in “{course}”.\nBooking ref: {ref}\nName: {name}\nWhatsApp: {phone} ({country})\nChild's age: {age}\nAmount: {amount}\nPayment method: {method}\nTransfer screenshot attached.",
+      "country": "Country",
+      "phoneHint": "We'll send your Zoom link and recordings to this number.",
+      "err": {
+        "name": {
+          "empty": "Enter your name.",
+          "digits": "Names can't contain numbers.",
+          "chars": "Use letters only, without symbols or emoji.",
+          "short": "That name is too short. Enter your full name.",
+          "long": "That name is too long. Enter your first and last name only."
+        },
+        "phone": {
+          "empty": "Enter your WhatsApp number.",
+          "chars": "Use digits only.",
+          "invalid": "That doesn't look like a valid {country} mobile number. Example: {ex}",
+          "needIntl": "Enter the full number with the country code, e.g. {ex}"
+        },
+        "email": {
+          "invalid": "That email address isn't valid. Example: name@gmail.com",
+          "typo": "Did you mean {email}?"
+        }
+      },
+      "useSuggestion": "Yes, fix it",
+      "outsideEgypt": "InstaPay only works with Egyptian bank accounts and wallets. If you don't have one, message us on WhatsApp and we'll send you another way to pay.",
+      "askOtherPayment": "Ask about another payment method",
+      "otherPaymentMsg": "Hi, I'd like to book “{course}” but I don't have InstaPay. Booking ref: {ref}. Which payment methods are available from {country}?"
     },
     "instapay": {
       "label": "InstaPay",
@@ -167,6 +266,9 @@
       "account": "Account name",
       "note": "Add your booking ref to the transfer note if the app allows it."
     },
-    "card": { "label": "Bank card", "hint": "Coming soon" }
+    "card": {
+      "label": "Bank card",
+      "hint": "Coming soon"
+    }
   }
 }
