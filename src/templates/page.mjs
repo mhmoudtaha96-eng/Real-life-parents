@@ -45,6 +45,7 @@ function layout(ctx, body) {
 <link rel="alternate" hreflang="x-default" href="${alternates.ar}">
 <meta name="robots" content="index,follow,max-image-preview:large">
 <meta name="theme-color" content="${site.themeColor}">
+<meta name="color-scheme" content="light only">
 <meta name="author" content="${esc(ctx.ins.name)}">
 ${site.googleSiteVerification ? `<meta name="google-site-verification" content="${esc(site.googleSiteVerification)}">` : ''}
 <meta property="og:type" content="website">

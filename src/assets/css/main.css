@@ -38,22 +38,9 @@
   --sec: clamp(56px, 8vw, 112px);
   color-scheme: light;
 }
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --paper: #111A1C; --surface: #18242A; --ink: #E8EFEB; --ink-soft: #A3B3B1; --line: #2A3A3F;
-    --calm: #4DB3A5; --calm-deep: #7CCFC3; --on-calm: #0D1A1B; --crayon: #FF6E60; --sun: #FFD067;
-    --sun-soft: #3A3218; --mint: #1A2C2A; --wa: #3CC879;
-    --shadow: 0 1px 0 rgba(0, 0, 0, .3), 0 16px 36px -14px rgba(0, 0, 0, .6);
-    color-scheme: dark;
-  }
-}
-:root[data-theme="dark"] {
-  --paper: #111A1C; --surface: #18242A; --ink: #E8EFEB; --ink-soft: #A3B3B1; --line: #2A3A3F;
-  --calm: #4DB3A5; --calm-deep: #7CCFC3; --on-calm: #0D1A1B; --crayon: #FF6E60; --sun: #FFD067;
-  --sun-soft: #3A3218; --mint: #1A2C2A; --wa: #3CC879;
-  --shadow: 0 1px 0 rgba(0, 0, 0, .3), 0 16px 36px -14px rgba(0, 0, 0, .6);
-  color-scheme: dark;
-}
+/* One look on every device: the brand is always shown in its light palette,
+   even when the phone or computer is set to dark mode. */
+html { color-scheme: light only; background: #F1F5EE; }
 
 /* ---------- base ---------- */
 *, *::before, *::after { box-sizing: border-box; }
