@@ -140,10 +140,10 @@ write(path.join(OUT, '_headers'), `/*
   Cache-Control: public, max-age=2592000
 
 /assets/css/*
-  Cache-Control: public, max-age=3600, must-revalidate
+  Cache-Control: public, max-age=0, must-revalidate
 
 /assets/js/*
-  Cache-Control: public, max-age=3600, must-revalidate
+  Cache-Control: public, max-age=0, must-revalidate
 
 /*.html
   Cache-Control: public, max-age=0, must-revalidate
@@ -159,8 +159,19 @@ const t404 = i18n.ar;
 write(path.join(OUT, '404.html'), `<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>الصفحة مش موجودة | ${site.brand}</title><meta name="robots" content="noindex"><link rel="stylesheet" href="/assets/css/main.css"></head>
 <body><div class="page"><main class="wrap notfound"><h1 class="h2">الصفحة دي مش موجودة</h1><p>Page not found.</p><p><a class="btn btn-primary" href="/">${t404.book}</a> <a class="btn btn-ghost" href="/en/">English</a></p></main></div></body></html>`);
 
-// cache-busting: stamp asset URLs with a build hash
-const stamp = Date.now().toString(36);
+// cache-busting: version every CSS/JS URL with a hash of the asset contents, so browsers
+// always load the newest code after a deploy (and keep using the cache when nothing changed).
+const { createHash } = await import('node:crypto');
+const assetFiles = walk(path.join(OUT, 'assets')).filter((f) => /\.(js|css)$/.test(f)).sort();
+const hash = createHash('sha1');
+for (const f of assetFiles) hash.update(fs.readFileSync(f));
+const stamp = hash.digest('hex').slice(0, 10);
+// 1) every relative import inside the JS modules: './x.js' → './x.js?v=…'
+for (const f of assetFiles.filter((f) => f.endsWith('.js'))) {
+  const js = fs.readFileSync(f, 'utf8').replace(/((?:from|import)\s*)(['"])(\.{1,2}\/[^'"?]+\.js)\2/g, `$1$2$3?v=${stamp}$2`);
+  fs.writeFileSync(f, js);
+}
+// 2) the stylesheet and entry script referenced from the pages
 for (const f of walk(OUT).filter((f) => f.endsWith('.html'))) {
   const html = fs.readFileSync(f, 'utf8').replace(/(assets\/(?:css|js)\/main\.(?:css|js))"/g, `$1?v=${stamp}"`);
   fs.writeFileSync(f, html);
