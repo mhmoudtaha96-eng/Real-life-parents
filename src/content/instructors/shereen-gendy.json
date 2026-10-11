@@ -1,0 +1,38 @@
+{
+  "id": "shereen-gendy",
+  "photo": "",
+  "_photoNote": "Add a square photo (at least 800x800, .webp or .jpg) to src/assets/img/ and set e.g. \"/assets/img/shereen.webp\". Until then a monogram is shown.",
+  "sameAs": ["https://www.instagram.com/real_life_parents/"],
+  "credentials": ["ICF", "Positive Discipline Association"],
+  "stats": [
+    { "value": 6, "suffix": "+", "label": { "ar": "سنين خبرة مع الأمهات والأسر", "en": "years working with mothers and families" } },
+    { "value": 70, "suffix": "+", "label": { "ar": "أسرة اشتغلت معاها في جلسات فردية", "en": "families helped in one-to-one sessions" } },
+    { "value": 2, "suffix": "", "label": { "ar": "أم لطفلين", "en": "a mother of two" } }
+  ],
+  "content": {
+    "ar": {
+      "name": "شيرين جندي",
+      "monogram": "ش",
+      "role": "كوتش تربية معتمدة · أخصائية تعديل سلوك · أم لطفلين",
+      "jobTitle": "كوتش تربية معتمدة وأخصائية تعديل سلوك",
+      "bio": [
+        "أنا شيرين جندي، كوتش تربية معتمدة من ICF، وأخصائية تعديل سلوك ومدرّبة تربية إيجابية معتمدة من Positive Discipline Association. بقالي أكتر من ٦ سنين بشتغل مع الأمهات والأسر في تحديات التربية اليومية.",
+        "أنا كمان أم لطفلين، وعارفة إن التربية مش دايمًا سهلة، وإن التعامل مع الزن والعند ونوبات الغضب ممكن يستنزف طاقتنا. أنا مؤمنة إن التربية مش فطرة بنعرف نعملها صح لوحدنا، لكنها مهارة بنتعلمها ونطوّرها كل يوم.",
+        "هدفي إننا نساعد أطفالنا يكبروا وهم واثقين في نفسهم، قادرين يعبّروا عن مشاعرهم واحتياجاتهم، وعندهم انضباط ذاتي، مش لمجرد إنهم خايفين من العقاب. وده بيبدأ من سن صغير: حدود واضحة، وتعليم بدل الصراخ والعقاب."
+      ],
+      "quote": "التربية مش فطرة بنعرف نعملها صح لوحدنا، لكنها مهارة بنتعلمها ونطوّرها كل يوم."
+    },
+    "en": {
+      "name": "Shereen Gendy",
+      "monogram": "S",
+      "role": "Certified parenting coach · Behaviour modification specialist · Mother of two",
+      "jobTitle": "Certified Parenting Coach and Behaviour Modification Specialist",
+      "bio": [
+        "I'm Shereen Gendy, an ICF-certified parenting coach, behaviour modification specialist, and Positive Discipline trainer certified by the Positive Discipline Association. For more than six years I've worked with mothers and families on everyday parenting challenges.",
+        "I'm also a mother of two, so I know parenting isn't always easy, and that whining, defiance and tantrums can drain us. I believe parenting isn't an instinct we get right on our own. It's a skill we learn and grow every day.",
+        "My goal is to help children grow up confident, able to express their feelings and needs, with self-discipline that doesn't come from fear of punishment. That starts early: clear limits, and teaching instead of shouting and punishing."
+      ],
+      "quote": "Parenting isn't an instinct we get right on our own. It's a skill we learn and grow every day."
+    }
+  }
+}

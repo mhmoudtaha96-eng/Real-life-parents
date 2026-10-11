@@ -1,0 +1,41 @@
+{
+  "_note": "Global site settings. Values marked TODO must be replaced with the client's real details before going live.",
+  "siteUrl": "https://reallifeparents.com",
+  "brand": "Real Life Parents",
+  "defaultLang": "ar",
+  "languages": ["ar", "en"],
+  "featuredCourse": "mesh-kol-yom-khenaqa",
+  "currency": "EGP",
+  "timezone": "Africa/Cairo",
+  "themeColor": "#1D6F66",
+  "social": {
+    "instagram": "https://www.instagram.com/real_life_parents/"
+  },
+  "contact": {
+    "_todo": "TODO: replace with the real WhatsApp number in international format, digits only (e.g. 2010xxxxxxxx)",
+    "whatsapp": "201000000000",
+    "email": ""
+  },
+  "analytics": {
+    "_note": "Optional. Paste IDs to enable. Leave empty to disable.",
+    "ga4": "",
+    "metaPixel": ""
+  },
+  "googleSiteVerification": "",
+  "payments": {
+    "_note": "Each key is a payment provider. Enable/disable here. New providers live in src/assets/js/payments/providers/.",
+    "instapay": {
+      "enabled": true,
+      "_todo": "TODO: replace with the client's real InstaPay payment link and handle",
+      "link": "https://ipn.eg/S/reallifeparents/instapay/0000",
+      "handle": "reallifeparents@instapay",
+      "accountName": "Shereen Gendy",
+      "qrImage": "",
+      "_qrNote": "Leave qrImage empty to auto-generate the QR from the link at build time, or set e.g. \"/assets/img/instapay-qr.png\" to use the QR downloaded from the InstaPay app."
+    },
+    "card": {
+      "enabled": false,
+      "_note": "Placeholder for a future card gateway (Paymob / Fawry / Kashier / Stripe)."
+    }
+  }
+}
