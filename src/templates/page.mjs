@@ -19,6 +19,7 @@ ${audience(ctx)}
 ${curriculum(ctx)}
 ${includes(ctx)}
 ${coach(ctx)}
+${media(ctx)}
 ${details(ctx)}
 ${how(ctx)}
 ${faq(ctx)}
@@ -32,9 +33,9 @@ ${checkoutDialog(ctx)}
 }
 
 /* ---------- document shell ---------- */
-function layout(ctx, body) {
+export function layout(ctx, body) {
   const { site, t, lang, course, c, url, alternates, rel, preview } = ctx;
-  const seo = course.seo[lang];
+  const seo = ctx.seo || course.seo[lang];
   const og = `${site.siteUrl}/assets/img/og-${lang}.png`;
   const head = `
 <title>${esc(seo.title)}</title>
@@ -56,7 +57,7 @@ ${site.googleSiteVerification ? `<meta name="google-site-verification" content="
 <meta property="og:image" content="${og}">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="${esc(c.name + ' — ' + c.kicker)}">
+<meta property="og:image:alt" content="${esc(ctx.ogAlt || (c.name + ' — ' + c.kicker))}">
 <meta property="og:locale" content="${t.ogLocale}">
 <meta property="og:locale:alternate" content="${lang === 'ar' ? 'en_US' : 'ar_EG'}">
 <meta name="twitter:card" content="summary_large_image">
@@ -71,7 +72,7 @@ ${site.googleSiteVerification ? `<meta name="google-site-verification" content="
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@500;700;800&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap">
 <link rel="stylesheet" href="${rel}assets/css/main.css">
-<script type="application/ld+json">${structuredData(ctx)}</script>
+<script type="application/ld+json">${ctx.jsonld || structuredData(ctx)}</script>
 ${analytics(site)}`;
 
   const scripts = `
@@ -123,8 +124,8 @@ function pageData(ctx) {
     locale: t.locale,
     currency: site.currency,
     whatsapp: site.contact.whatsapp,
-    strings: { checkout: t.checkout, instapay: t.instapay, card: t.card, currency: t.currency, days: t.days, hours: t.hours, minutes: t.minutes, earlyEnded: t.earlyEnded, insteadOf: t.insteadOf },
-    products: [{
+    strings: { session: t.session, checkout: t.checkout, instapay: t.instapay, card: t.card, currency: t.currency, days: t.days, hours: t.hours, minutes: t.minutes, earlyEnded: t.earlyEnded, insteadOf: t.insteadOf },
+    products: ctx.products || [{
       id: course.id,
       slug: course.slug,
       type: course.type,
@@ -132,13 +133,15 @@ function pageData(ctx) {
       pricing: course.pricing,
     }],
     payments,
+    ...(ctx.pageExtra || {}),
   };
   return JSON.stringify(data).replace(/</g, '\\u003c');
 }
 
 /* ---------- header / footer ---------- */
-function header(ctx) {
+export function header(ctx) {
   const { t, lang, links, site } = ctx;
+  const nb = ctx.navBase || '';
   const other = lang === 'ar' ? 'en' : 'ar';
   return `<a class="skip" href="#main">${t.skip}</a>
 <header class="site-header">
@@ -148,14 +151,15 @@ function header(ctx) {
       <span class="brand-name">Real Life <b>Parents</b></span>
     </a>
     <nav class="main-nav" aria-label="${lang === 'ar' ? 'روابط الصفحة' : 'Page sections'}">
-      <a href="#learn">${t.nav.learn}</a>
-      <a href="#coach">${t.nav.coach}</a>
-      <a href="#details">${t.nav.details}</a>
-      <a href="#faq">${t.nav.faq}</a>
+      <a href="${nb}#learn">${t.nav.learn}</a>
+      <a href="${nb}#coach">${t.nav.coach}</a>
+      <a href="${nb}#details">${t.nav.details}</a>
+      <a href="${links.session[lang]}"${ctx.isSessionPage ? ' aria-current="page"' : ''}>${t.nav.session}</a>
+      <a href="${nb}#faq">${t.nav.faq}</a>
     </nav>
     <div class="header-actions">
       <a class="lang-switch" href="${links.self[other]}" hreflang="${other}" lang="${other}">${icons.globe}<span>${t.switchTo}</span></a>
-      <button class="btn btn-primary btn-sm" type="button" data-checkout>${t.bookShort}</button>
+      ${ctx.headerCta || `<button class="btn btn-primary btn-sm" type="button" data-checkout>${t.bookShort}</button>`}
     </div>
   </div>
 </header>`;
@@ -171,7 +175,7 @@ export function logoMark(size = 34) {
 </svg>`;
 }
 
-function footer(ctx) {
+export function footer(ctx) {
   const { t, lang, site, links } = ctx;
   const other = lang === 'ar' ? 'en' : 'ar';
   return `<footer class="site-footer">
@@ -181,6 +185,7 @@ function footer(ctx) {
       <p>${t.footerTag}</p>
     </div>
     <div class="footer-links">
+      <a href="${links.session[lang]}">${icons.calendar}<span>${t.nav.session}</span></a>
       <a href="${site.social.instagram}" target="_blank" rel="noopener">${icons.ig}<span>${t.followIg}</span></a>
       <a href="${links.self[other]}" hreflang="${other}" lang="${other}">${icons.globe}<span>${t.switchTo}</span></a>
     </div>
@@ -298,7 +303,7 @@ function includes(ctx) {
 function coach(ctx) {
   const { ins, instructor, lang, rel } = ctx;
   const photo = instructor.photo
-    ? `<img class="coach-photo" src="${rel}${instructor.photo.replace(/^\//, '')}" alt="${esc(ins.name)}" width="480" height="480" loading="lazy" decoding="async">`
+    ? `<img class="coach-photo" src="${rel}${instructor.photo.replace(/^\//, '')}" srcset="${rel}${instructor.photo.replace(/^\//, '').replace('.webp', '-320.webp')} 320w, ${rel}${instructor.photo.replace(/^\//, '')} 560w" sizes="240px" alt="${esc(ins.photoAlt || ins.name)}" width="560" height="560" loading="lazy" decoding="async">`
     : `<div class="coach-photo coach-monogram" role="img" aria-label="${esc(ins.name)}"><span>${esc(ins.monogram)}</span></div>`;
   return `<section class="section coach" id="coach" aria-labelledby="coach-title">
   <div class="wrap coach-grid">
@@ -314,8 +319,64 @@ function coach(ctx) {
       <dl class="stats">
         ${instructor.stats.map((s) => `<div><dt>${esc(s.label[lang])}</dt><dd>${fmt.num(s.value, lang)}${s.suffix}</dd></div>`).join('')}
       </dl>
+      <div class="coach-cta">
+        <a class="btn btn-sun btn-lg" href="${ctx.links.session[lang]}">${icons.calendar}<span>${ctx.t.session.ctaFromCoach}</span></a>
+      </div>
     </div>
   </div>
+</section>`;
+}
+
+/* ---------- video + photo album ---------- */
+function media(ctx) {
+  const { t, lang, rel, instructor } = ctx;
+  const m = instructor.media || {};
+  const M = t.media;
+  const img = (p) => rel + p.replace(/^\//, '');
+  const v = m.video || {};
+  let video = '';
+  if (v.mp4) {
+    video = `<video class="reel-video" controls playsinline preload="none" ${v.poster ? `poster="${img(v.poster)}"` : ''} width="720" height="1280">
+      <source src="${img(v.mp4)}" type="video/mp4"></video>`;
+  } else if (v.instagram) {
+    video = `<iframe class="reel-frame" src="https://www.instagram.com/reel/${esc(v.instagram)}/embed/" title="${esc(M.videoTitle)}"
+      loading="lazy" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen scrolling="no"></iframe>`;
+  }
+  const album = (m.album || []).map((a, i) => `<li class="album-item album-${a.shape || 'land'}">
+      <button type="button" class="album-btn" data-album-index="${i}" aria-label="${esc(M.open)}: ${esc(a.caption[lang])}">
+        <img src="${img(a.thumb)}" alt="${esc(a.alt[lang])}" width="${a.tw}" height="${a.th}" loading="lazy" decoding="async">
+      </button>
+      <span class="album-cap">${esc(a.caption[lang])}</span>
+    </li>`).join('');
+  if (!video && !album) return '';
+  const albumData = JSON.stringify((m.album || []).map((a) => ({ src: img(a.src), w: a.w, h: a.h, alt: a.alt[lang], caption: a.caption[lang] }))).replace(/</g, '\\u003c');
+  return `<section class="section media" id="watch" aria-labelledby="media-title">
+  <div class="wrap">
+    <div class="section-head">
+      <h2 id="media-title" class="h2">${esc(M.title)}</h2>
+      <p>${esc(M.intro)}</p>
+    </div>
+    <div class="media-grid">
+      ${video ? `<figure class="reel">
+        <div class="reel-phone">${video}</div>
+        <figcaption>${esc(M.videoCaption)}</figcaption>
+      </figure>` : ''}
+      ${album ? `<div class="album">
+        <h3 class="album-title">${esc(M.albumTitle)}</h3>
+        <ul class="album-grid">${album}</ul>
+      </div>` : ''}
+    </div>
+  </div>
+  <dialog class="lightbox" id="lightbox" aria-label="${esc(M.albumTitle)}">
+    <figure class="lb-fig">
+      <img class="lb-img" alt="" decoding="async">
+      <figcaption class="lb-cap"></figcaption>
+    </figure>
+    <button class="lb-btn lb-close" type="button" data-lb="close" aria-label="${esc(M.close)}">${icons.close}</button>
+    <button class="lb-btn lb-prev" type="button" data-lb="prev" aria-label="${esc(M.prev)}">‹</button>
+    <button class="lb-btn lb-next" type="button" data-lb="next" aria-label="${esc(M.next)}">›</button>
+    <script type="application/json" id="album-data">${albumData}</script>
+  </dialog>
 </section>`;
 }
 
@@ -418,7 +479,7 @@ function stickyBar(ctx) {
 }
 
 /* ---------- checkout dialog (UI shell; logic in assets/js/checkout.js) ---------- */
-function checkoutDialog(ctx) {
+export function checkoutDialog(ctx) {
   const { t, c, lang } = ctx;
   const k = t.checkout;
   return `<dialog class="checkout" id="checkout" aria-labelledby="co-title">
@@ -426,7 +487,7 @@ function checkoutDialog(ctx) {
     <div class="co-head">
       <div>
         <h2 id="co-title">${k.title}</h2>
-        <p class="co-product">${esc(c.name)}</p>
+        <p class="co-product" data-co-product>${esc(ctx.checkoutTitle || c.name)}</p>
       </div>
       <button class="icon-btn" type="button" data-close aria-label="${k.close}">${icons.close}</button>
     </div>

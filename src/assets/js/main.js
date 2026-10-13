@@ -70,3 +70,7 @@ if (bar && heroBuy && 'IntersectionObserver' in window) {
 document.querySelectorAll('.faq details').forEach((d, i) => d.addEventListener('toggle', () => { if (d.open) track('faq_open', { index: i + 1 }); }));
 
 track('view_item', { currency: data.currency, value: activeTier(data.products[0]).amount, items: [{ item_id: data.products[0].id, item_name: data.products[0].name }] });
+
+/* Page-specific features, loaded only where they're used */
+if (document.querySelector('[data-calendar]')) import('./sessions.js').then((m) => m.initCalendar(data, checkout));
+if (document.getElementById('lightbox')) import('./gallery.js').then((m) => m.initGallery(data));

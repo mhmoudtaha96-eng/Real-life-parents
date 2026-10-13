@@ -41,9 +41,15 @@ export function initCheckout(data, cart) {
   }
 
   // ---------- open / close ----------
-  function open(productId) {
+  // meta = extra details for this booking, e.g. { label: 'Tue 20 Oct, 7:00 pm', slot: '2026-10-20T19:00' }
+  let meta = null;
+  function open(productId, extra = null) {
     lastTrigger = document.activeElement;
     cart.buyNow(productId || data.products[0].id);
+    meta = extra;
+    const line = cart.lines()[0];
+    const title = dlg.querySelector('[data-co-product]');
+    if (title && line) title.textContent = meta?.label ? `${line.product.name} · ${meta.label}` : line.product.name;
     order = null;
     refreshAmount();
     go(1);
@@ -181,6 +187,7 @@ export function initCheckout(data, cart) {
       email: validateEmail(fEmail.value).value,
       lang: data.lang,
     }, data.currency);
+    if (meta) order.meta = meta;
     saveOrder(order);
     $$('[data-co-ref]').forEach((b) => { b.textContent = order.ref; });
     refreshAmount();
@@ -219,7 +226,9 @@ export function initCheckout(data, cart) {
 
   // ---------- step 3: confirm on WhatsApp ----------
   function buildWhatsApp() {
-    const msg = K.waMessage
+    const tpl = order.meta?.label && K.waMessageSession ? K.waMessageSession : K.waMessage;
+    const msg = tpl
+      .replace('{slot}', order.meta?.label || '')
       .replace('{course}', order.lines.map((l) => l.name).join(' + '))
       .replace('{ref}', order.ref)
       .replace('{name}', order.customer.name)

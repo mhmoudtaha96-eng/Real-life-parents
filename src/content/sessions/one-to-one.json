@@ -1,0 +1,113 @@
+{
+  "_note": "SAMPLE availability for the 1-to-1 booking page. Replace with Shereen's real schedule. Times are Cairo time (24h).",
+  "id": "session-1to1",
+  "slug": "book-session",
+  "sample": true,
+  "instructor": "shereen-gendy",
+  "durationMinutes": 60,
+  "platform": "Zoom",
+  "price": {
+    "_todo": "TODO: confirm the real price and duration of a private session",
+    "amount": 1000,
+    "currency": "EGP",
+    "workshopDiscountPercent": 30
+  },
+  "booking": {
+    "daysAhead": 45,
+    "minNoticeHours": 24
+  },
+  "weekly": {
+    "_help": "Repeating weekly slots. Keys: sat sun mon tue wed thu fri.",
+    "sat": [
+      "11:00",
+      "13:00"
+    ],
+    "sun": [
+      "19:00",
+      "20:30"
+    ],
+    "tue": [
+      "11:00",
+      "13:00",
+      "19:00"
+    ],
+    "thu": [
+      "19:00",
+      "20:30"
+    ]
+  },
+  "extraSlots": [
+    {
+      "date": "2026-10-24",
+      "times": [
+        "17:00"
+      ]
+    },
+    {
+      "date": "2026-11-05",
+      "times": [
+        "12:00"
+      ]
+    }
+  ],
+  "blockedDates": [
+    "2026-11-09",
+    "2026-11-11"
+  ],
+  "booked": [
+    {
+      "date": "2026-10-17",
+      "time": "11:00"
+    },
+    {
+      "date": "2026-10-18",
+      "time": "19:00"
+    },
+    {
+      "date": "2026-10-20",
+      "time": "13:00"
+    },
+    {
+      "date": "2026-10-22",
+      "time": "20:30"
+    },
+    {
+      "date": "2026-10-27",
+      "time": "11:00"
+    },
+    {
+      "date": "2026-10-27",
+      "time": "19:00"
+    }
+  ],
+  "content": {
+    "ar": {
+      "seo": {
+        "title": "احجزي جلسة استشارية فردية مع شيرين جندي | Real Life Parents",
+        "description": "اختاري اليوم والميعاد المناسب واحجزي جلسة تربية فردية أونلاين على Zoom مع كوتش التربية شيرين جندي، لتحديات طفلك وخطوات عملية تناسبكم."
+      },
+      "kicker": "جلسة استشارية فردية أونلاين",
+      "title": "احجزي جلسة فردية مع شيرين",
+      "intro": "جلسة خاصة بيكي وبطفلك، نناقش فيها تحدياتك ونشتغل على خطوات عملية تناسب احتياجاتك واحتياجاته. اختاري اليوم والميعاد اللي يناسبك من التقويم.",
+      "points": [
+        "جلسة ٦٠ دقيقة أونلاين على Zoom",
+        "نناقش تحدياتك الخاصة مع طفلك ونشتغل على خطوات عملية",
+        "خصم ٣٠٪ لو حضرتي ورشة «مش كل يوم خناقة!» (صالح لمدة شهر بعد الورشة)"
+      ]
+    },
+    "en": {
+      "seo": {
+        "title": "Book a 1-to-1 parenting session with Shereen Gendy | Real Life Parents",
+        "description": "Pick a day and time and book a private online parenting session on Zoom with certified parenting coach Shereen Gendy, focused on your child and practical next steps."
+      },
+      "kicker": "Private online consultation",
+      "title": "Book a 1-to-1 session with Shereen",
+      "intro": "A private session about you and your child, where we discuss your own challenges and work on practical steps that fit your needs and theirs. Pick the day and time that suits you.",
+      "points": [
+        "60-minute session online on Zoom",
+        "We discuss your own challenges with your child and work on practical steps",
+        "30% off if you attended “Not Every Day a Battle!” (valid for one month after the workshop)"
+      ]
+    }
+  }
+}

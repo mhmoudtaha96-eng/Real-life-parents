@@ -1,13 +1,38 @@
 {
   "id": "shereen-gendy",
-  "photo": "",
-  "_photoNote": "Add a square photo (at least 800x800, .webp or .jpg) to src/assets/img/ and set e.g. \"/assets/img/shereen.webp\". Until then a monogram is shown.",
-  "sameAs": ["https://www.instagram.com/real_life_parents/"],
-  "credentials": ["ICF", "Positive Discipline Association"],
+  "photo": "/assets/img/shereen/profile.webp",
+  "sameAs": [
+    "https://www.instagram.com/real_life_parents/"
+  ],
+  "credentials": [
+    "ICF",
+    "Positive Discipline Association"
+  ],
   "stats": [
-    { "value": 6, "suffix": "+", "label": { "ar": "سنين خبرة مع الأمهات والأسر", "en": "years working with mothers and families" } },
-    { "value": 70, "suffix": "+", "label": { "ar": "أسرة اشتغلت معاها في جلسات فردية", "en": "families helped in one-to-one sessions" } },
-    { "value": 2, "suffix": "", "label": { "ar": "أم لطفلين", "en": "a mother of two" } }
+    {
+      "value": 6,
+      "suffix": "+",
+      "label": {
+        "ar": "سنين خبرة مع الأمهات والأسر",
+        "en": "years working with mothers and families"
+      }
+    },
+    {
+      "value": 70,
+      "suffix": "+",
+      "label": {
+        "ar": "أسرة اشتغلت معاها في جلسات فردية",
+        "en": "families helped in one-to-one sessions"
+      }
+    },
+    {
+      "value": 2,
+      "suffix": "",
+      "label": {
+        "ar": "أم لطفلين",
+        "en": "a mother of two"
+      }
+    }
   ],
   "content": {
     "ar": {
@@ -20,7 +45,8 @@
         "أنا كمان أم لطفلين، وعارفة إن التربية مش دايمًا سهلة، وإن التعامل مع الزن والعند ونوبات الغضب ممكن يستنزف طاقتنا. أنا مؤمنة إن التربية مش فطرة بنعرف نعملها صح لوحدنا، لكنها مهارة بنتعلمها ونطوّرها كل يوم.",
         "هدفي إننا نساعد أطفالنا يكبروا وهم واثقين في نفسهم، قادرين يعبّروا عن مشاعرهم واحتياجاتهم، وعندهم انضباط ذاتي، مش لمجرد إنهم خايفين من العقاب. وده بيبدأ من سن صغير: حدود واضحة، وتعليم بدل الصراخ والعقاب."
       ],
-      "quote": "التربية مش فطرة بنعرف نعملها صح لوحدنا، لكنها مهارة بنتعلمها ونطوّرها كل يوم."
+      "quote": "التربية مش فطرة بنعرف نعملها صح لوحدنا، لكنها مهارة بنتعلمها ونطوّرها كل يوم.",
+      "photoAlt": "شيرين جندي، كوتش التربية"
     },
     "en": {
       "name": "Shereen Gendy",
@@ -32,7 +58,69 @@
         "I'm also a mother of two, so I know parenting isn't always easy, and that whining, defiance and tantrums can drain us. I believe parenting isn't an instinct we get right on our own. It's a skill we learn and grow every day.",
         "My goal is to help children grow up confident, able to express their feelings and needs, with self-discipline that doesn't come from fear of punishment. That starts early: clear limits, and teaching instead of shouting and punishing."
       ],
-      "quote": "Parenting isn't an instinct we get right on our own. It's a skill we learn and grow every day."
+      "quote": "Parenting isn't an instinct we get right on our own. It's a skill we learn and grow every day.",
+      "photoAlt": "Shereen Gendy, parenting coach"
     }
+  },
+  "_mediaNote": "video.instagram = reel ID (plays inside the page). For the best experience upload the MP4 to src/assets/video/ and set video.mp4 (+ poster); it then plays with no Instagram frame.",
+  "media": {
+    "video": {
+      "instagram": "DJ4lgwxNWEk",
+      "mp4": "",
+      "poster": ""
+    },
+    "album": [
+      {
+        "src": "/assets/img/shereen/tv-ahlan-bel-setat.webp",
+        "thumb": "/assets/img/shereen/tv-ahlan-bel-setat-640.webp",
+        "w": 1280,
+        "h": 852,
+        "tw": 640,
+        "th": 426,
+        "shape": "land",
+        "alt": {
+          "ar": "شيرين جندي ضيفة في برنامج أهلًا بالستات",
+          "en": "Shereen Gendy as a guest on the TV show Ahlan Bel Settat"
+        },
+        "caption": {
+          "ar": "ضيفة في برنامج «أهلًا بالستات»",
+          "en": "Guest on “Ahlan Bel Settat”"
+        }
+      },
+      {
+        "src": "/assets/img/shereen/tv-studio.webp",
+        "thumb": "/assets/img/shereen/tv-studio-640.webp",
+        "w": 1280,
+        "h": 852,
+        "tw": 640,
+        "th": 426,
+        "shape": "land",
+        "alt": {
+          "ar": "شيرين جندي في استوديو التصوير",
+          "en": "Shereen Gendy in the TV studio"
+        },
+        "caption": {
+          "ar": "خلال لقاء تلفزيوني",
+          "en": "During a TV interview"
+        }
+      },
+      {
+        "src": "/assets/img/shereen/portrait-cafe.webp",
+        "thumb": "/assets/img/shereen/portrait-cafe-640.webp",
+        "w": 960,
+        "h": 1280,
+        "tw": 640,
+        "th": 853,
+        "shape": "tall",
+        "alt": {
+          "ar": "صورة شخصية لشيرين جندي",
+          "en": "Portrait of Shereen Gendy"
+        },
+        "caption": {
+          "ar": "شيرين جندي",
+          "en": "Shereen Gendy"
+        }
+      }
+    ]
   }
 }

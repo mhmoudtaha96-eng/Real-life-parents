@@ -76,3 +76,21 @@ The checkout already works with a **cart → order → payment provider** model:
 - No framework, about 20 KB of JS loaded as modules, system-font fallbacks, cache headers
 
 After launch, submit `https://<domain>/sitemap.xml` in Google Search Console and check the page with the Rich Results Test.
+
+## 1-to-1 session booking page
+
+- Pages: `/book-session/` (Arabic) and `/en/book-session/` (English).
+- Availability: `src/content/sessions/one-to-one.json`. All times are Cairo time.
+  - `weekly`: repeating slots per weekday (`sat` … `fri`).
+  - `extraSlots`: one-off extra times on specific dates.
+  - `blockedDates`: days off (for example workshop days).
+  - `booked`: times that are taken. They show as "booked".
+  - `booking.daysAhead` sets how far ahead people can book. `booking.minNoticeHours` sets the minimum notice.
+  - `price.amount`, `price.workshopDiscountPercent` and `durationMinutes` set the price, the workshop discount and the session length.
+  - Set `"sample": false` once the real schedule is in. This removes the "sample times" note.
+- The site is static, so a booked time only disappears for other visitors once you add it to `booked` and redeploy. For automatic blocking, add a small backend (for example a Cloudflare Worker + D1) or connect Cal.com.
+
+## Coach photo, album and video
+
+- Coach data: `src/content/instructors/shereen-gendy.json`. It holds `photo`, the `media.album` items and `media.video`.
+- Video: `media.video.instagram` is the reel ID and plays inside the page. To drop the Instagram frame, put an MP4 in `src/assets/video/` and set `media.video.mp4` (and an optional `poster`).

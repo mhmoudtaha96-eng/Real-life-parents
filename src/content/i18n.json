@@ -12,7 +12,8 @@
       "details": "المواعيد والسعر",
       "faq": "أسئلة شائعة",
       "menu": "القائمة",
-      "close": "إغلاق"
+      "close": "إغلاق",
+      "session": "جلسة فردية"
     },
     "book": "احجزي مكانك",
     "bookShort": "احجزي",
@@ -119,7 +120,8 @@
       "useSuggestion": "أيوه، صحّحه",
       "outsideEgypt": "InstaPay بيشتغل بحسابات البنوك والمحافظ المصرية بس. لو مش معاكي حساب في مصر، كلمينا على واتساب ونبعتلك طريقة دفع تانية.",
       "askOtherPayment": "اسألي عن طريقة دفع تانية",
-      "otherPaymentMsg": "أهلًا، عايزة أحجز في ورشة «{course}» ومش معايا InstaPay. رقم الحجز: {ref}. إيه طرق الدفع المتاحة من {country}؟"
+      "otherPaymentMsg": "أهلًا، عايزة أحجز في ورشة «{course}» ومش معايا InstaPay. رقم الحجز: {ref}. إيه طرق الدفع المتاحة من {country}؟",
+      "waMessageSession": "أهلًا، حجزت {course}.\nالموعد: {slot} (بتوقيت مصر)\nرقم الحجز: {ref}\nالاسم: {name}\nالواتساب: {phone} ({country})\nسن الطفل: {age}\nالمبلغ: {amount}\nطريقة الدفع: {method}\nمرفق صورة التحويل."
     },
     "instapay": {
       "label": "InstaPay",
@@ -133,6 +135,63 @@
     "card": {
       "label": "بطاقة بنكية",
       "hint": "قريبًا"
+    },
+    "media": {
+      "title": "اسمعي من شيرين",
+      "intro": "شيرين بتحكي عن طريقتها في الكوتشينج وإزاي بتشتغل مع الأمهات.",
+      "videoTitle": "فيديو: شيرين جندي بتتكلم عن طريقتها في الكوتشينج",
+      "videoCaption": "شيرين بتشرح طريقتها في الكوتشينج",
+      "albumTitle": "من لقاءات شيرين",
+      "open": "كبّري الصورة",
+      "close": "إغلاق",
+      "prev": "الصورة اللي قبلها",
+      "next": "الصورة اللي بعدها"
+    },
+    "session": {
+      "ctaFromCoach": "احجزي جلسة فردية مع شيرين",
+      "workshopCta": "ورشة «مش كل يوم خناقة!»",
+      "pickDay": "١. اختاري اليوم",
+      "pickTime": "٢. اختاري الميعاد",
+      "yourBooking": "حجزك",
+      "prevMonth": "الشهر اللي فات",
+      "nextMonth": "الشهر الجاي",
+      "available": "متاح",
+      "full": "محجوز بالكامل",
+      "noSlots": "مفيش مواعيد متاحة في اليوم ده. اختاري يوم عليه علامة.",
+      "noneThisMonth": "مفيش مواعيد متاحة في الشهر ده، جربي الشهر الجاي.",
+      "slotsLeft": "{n} مواعيد متاحة",
+      "booked": "محجوز",
+      "cairoTime": "بتوقيت مصر",
+      "yourTime": "بتوقيتك: {t}",
+      "duration": "المدة",
+      "durationValue": "{n} دقيقة",
+      "platform": "المكان",
+      "price": "السعر",
+      "attended": "حضرت ورشة «مش كل يوم خناقة!» (خصم {p}٪)",
+      "attendedNote": "الخصم بيتأكد من فريقنا على واتساب.",
+      "reserve": "احجزي الميعاد ده",
+      "chooseFirst": "اختاري يوم وميعاد الأول",
+      "selected": "الميعاد اللي اخترتيه",
+      "slotLabel": "الموعد",
+      "productName": "جلسة استشارية فردية مع شيرين",
+      "productNameDiscount": "جلسة فردية (خصم حضور الورشة)",
+      "howTitle": "إزاي الحجز بيتم؟",
+      "howSteps": [
+        {
+          "t": "اختاري يوم وميعاد",
+          "b": "من التقويم، الأيام المتاحة عليها علامة."
+        },
+        {
+          "t": "اكتبي بياناتك وادفعي",
+          "b": "بـ InstaPay باللينك أو الـQR code."
+        },
+        {
+          "t": "ابعتي صورة التحويل",
+          "b": "على واتساب، وبنأكد الميعاد ونبعتلك لينك Zoom."
+        }
+      ],
+      "sampleNote": "المواعيد الظاهرة دلوقتي مواعيد تجريبية.",
+      "allCairo": "كل المواعيد بتوقيت مصر (القاهرة)."
     }
   },
   "en": {
@@ -148,7 +207,8 @@
       "details": "Dates & price",
       "faq": "FAQ",
       "menu": "Menu",
-      "close": "Close"
+      "close": "Close",
+      "session": "1-to-1 session"
     },
     "book": "Book your seat",
     "bookShort": "Book",
@@ -255,7 +315,8 @@
       "useSuggestion": "Yes, fix it",
       "outsideEgypt": "InstaPay only works with Egyptian bank accounts and wallets. If you don't have one, message us on WhatsApp and we'll send you another way to pay.",
       "askOtherPayment": "Ask about another payment method",
-      "otherPaymentMsg": "Hi, I'd like to book “{course}” but I don't have InstaPay. Booking ref: {ref}. Which payment methods are available from {country}?"
+      "otherPaymentMsg": "Hi, I'd like to book “{course}” but I don't have InstaPay. Booking ref: {ref}. Which payment methods are available from {country}?",
+      "waMessageSession": "Hi, I've booked a {course}.\nAppointment: {slot} (Cairo time)\nBooking ref: {ref}\nName: {name}\nWhatsApp: {phone} ({country})\nChild's age: {age}\nAmount: {amount}\nPayment method: {method}\nTransfer screenshot attached."
     },
     "instapay": {
       "label": "InstaPay",
@@ -269,6 +330,63 @@
     "card": {
       "label": "Bank card",
       "hint": "Coming soon"
+    },
+    "media": {
+      "title": "Hear from Shereen",
+      "intro": "Shereen talks about her coaching approach and how she works with mothers.",
+      "videoTitle": "Video: Shereen Gendy explains her coaching approach",
+      "videoCaption": "Shereen explains her coaching approach",
+      "albumTitle": "Shereen in the media",
+      "open": "Enlarge photo",
+      "close": "Close",
+      "prev": "Previous photo",
+      "next": "Next photo"
+    },
+    "session": {
+      "ctaFromCoach": "Book a 1-to-1 session with Shereen",
+      "workshopCta": "“Not Every Day a Battle!” workshop",
+      "pickDay": "1. Pick a day",
+      "pickTime": "2. Pick a time",
+      "yourBooking": "Your booking",
+      "prevMonth": "Previous month",
+      "nextMonth": "Next month",
+      "available": "Available",
+      "full": "Fully booked",
+      "noSlots": "No times available on this day. Pick a day with a dot.",
+      "noneThisMonth": "No times available this month. Try next month.",
+      "slotsLeft": "{n} times available",
+      "booked": "Booked",
+      "cairoTime": "Cairo time",
+      "yourTime": "Your time: {t}",
+      "duration": "Length",
+      "durationValue": "{n} minutes",
+      "platform": "Where",
+      "price": "Price",
+      "attended": "I attended “Not Every Day a Battle!” ({p}% off)",
+      "attendedNote": "Our team confirms the discount on WhatsApp.",
+      "reserve": "Book this time",
+      "chooseFirst": "Pick a day and time first",
+      "selected": "Your chosen time",
+      "slotLabel": "Appointment",
+      "productName": "1-to-1 consultation with Shereen",
+      "productNameDiscount": "1-to-1 session (workshop discount)",
+      "howTitle": "How booking works",
+      "howSteps": [
+        {
+          "t": "Pick a day and time",
+          "b": "Available days are marked on the calendar."
+        },
+        {
+          "t": "Enter your details and pay",
+          "b": "With InstaPay, using the link or the QR code."
+        },
+        {
+          "t": "Send your transfer screenshot",
+          "b": "On WhatsApp. We confirm your time and send your Zoom link."
+        }
+      ],
+      "sampleNote": "The times shown are sample times for now.",
+      "allCairo": "All times are Cairo time."
     }
   }
 }

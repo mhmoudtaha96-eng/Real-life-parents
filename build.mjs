@@ -13,6 +13,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { coursePage } from './src/templates/page.mjs';
+import { sessionPage } from './src/templates/session.mjs';
 import { activeTier } from './src/templates/helpers.mjs';
 import { qrSvg } from './scripts/qr.mjs';
 
@@ -30,6 +31,10 @@ const i18n = readJSON(path.join(SRC, 'content/i18n.json'));
 const loadAll = (dir) => fs.readdirSync(path.join(SRC, dir)).filter((f) => f.endsWith('.json')).map((f) => readJSON(path.join(SRC, dir, f)));
 const courses = loadAll('content/courses').filter((c) => c.status !== 'draft');
 const instructors = Object.fromEntries(loadAll('content/instructors').map((x) => [x.id, x]));
+const sessions = loadAll('content/sessions');
+const langPrefix = (lang) => (lang === site.defaultLang ? '' : `${lang}/`);
+const sessionRoute = (s, lang) => `${langPrefix(lang)}${s.slug}/`;
+const mainSession = sessions[0];
 
 // ---------- URL scheme ----------
 const routeFor = (course, lang) => {
@@ -87,6 +92,7 @@ for (const course of courses) {
       links: {
         home: Object.fromEntries(site.languages.map((l) => [l, relLink(route, homeRoutes[l])])),
         self: Object.fromEntries(site.languages.map((l) => [l, relLink(route, routes[l])])),
+        session: Object.fromEntries(site.languages.map((l) => [l, mainSession ? relLink(route, sessionRoute(mainSession, l)) : '#'])),
       },
       otherCourses: isHome
         ? listed.filter((x) => x.slug !== course.slug).map((x) => ({ ...x, href: relLink(route, routeFor(x, lang)) }))
@@ -98,6 +104,38 @@ for (const course of courses) {
       write(path.join(ROOT, 'preview/index.html'), coursePage({ ...ctx, preview: true }));
     }
     sitemap.push({ loc: ctx.url, alternates: ctx.alternates, priority: isHome ? '1.0' : '0.8' });
+  }
+}
+
+// ---------- 1-to-1 session booking pages ----------
+const featured = courses.find((c) => c.slug === site.featuredCourse) || courses[0];
+for (const session of sessions) {
+  const instructor = instructors[session.instructor];
+  const routes = Object.fromEntries(site.languages.map((l) => [l, sessionRoute(session, l)]));
+  for (const lang of site.languages) {
+    const route = routes[lang];
+    const t = i18n[lang];
+    const home = relLink(route, langPrefix(lang));
+    const ctx = {
+      site, t, lang, session, instructor,
+      course: featured, c: featured.content[lang],
+      ins: instructor.content[lang],
+      url: abs(route),
+      alternates: Object.fromEntries(site.languages.map((l) => [l, abs(routes[l])])),
+      rel: '../'.repeat(depth(route)),
+      qrSrc: qrPath ? '../'.repeat(depth(route)) + qrPath : '',
+      links: {
+        home: Object.fromEntries(site.languages.map((l) => [l, relLink(route, langPrefix(l))])),
+        self: Object.fromEntries(site.languages.map((l) => [l, relLink(route, routes[l])])),
+        session: Object.fromEntries(site.languages.map((l) => [l, relLink(route, routes[l])])),
+      },
+      navBase: home,
+      isSessionPage: true,
+      headerCta: `<a class="btn btn-primary btn-sm" href="${home}#details">${t.bookShort}</a>`,
+      preview: false,
+    };
+    write(path.join(OUT, route, 'index.html'), sessionPage(ctx));
+    sitemap.push({ loc: ctx.url, alternates: ctx.alternates, priority: '0.9' });
   }
 }
 
@@ -168,7 +206,7 @@ for (const f of assetFiles) hash.update(fs.readFileSync(f));
 const stamp = hash.digest('hex').slice(0, 10);
 // 1) every relative import inside the JS modules: './x.js' → './x.js?v=…'
 for (const f of assetFiles.filter((f) => f.endsWith('.js'))) {
-  const js = fs.readFileSync(f, 'utf8').replace(/((?:from|import)\s*)(['"])(\.{1,2}\/[^'"?]+\.js)\2/g, `$1$2$3?v=${stamp}$2`);
+  const js = fs.readFileSync(f, 'utf8').replace(/((?:from|import)\s*\(?\s*)(['"])(\.{1,2}\/[^'"?]+\.js)\2/g, `$1$2$3?v=${stamp}$2`);
   fs.writeFileSync(f, js);
 }
 // 2) the stylesheet and entry script referenced from the pages
@@ -180,6 +218,7 @@ if (PREVIEW) {
   // preview copies dist assets next to the preview page
   copyDir(path.join(OUT, 'assets'), path.join(ROOT, 'preview/assets'));
   copyDir(path.join(OUT, 'en'), path.join(ROOT, 'preview/en'));
+  for (const s of sessions) copyDir(path.join(OUT, s.slug), path.join(ROOT, 'preview', s.slug));
 }
 
 function walk(dir) {
