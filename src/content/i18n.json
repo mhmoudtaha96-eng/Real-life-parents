@@ -12,8 +12,10 @@
       "details": "المواعيد والسعر",
       "faq": "أسئلة شائعة",
       "menu": "القائمة",
-      "close": "إغلاق",
-      "session": "جلسة فردية"
+      "close": "إغلاق القائمة",
+      "session": "جلسة فردية",
+      "includes": "هتحصلي على إيه",
+      "watch": "فيديو وصور لشيرين"
     },
     "book": "احجزي مكانك",
     "bookShort": "احجزي",
@@ -207,8 +209,10 @@
       "details": "Dates & price",
       "faq": "FAQ",
       "menu": "Menu",
-      "close": "Close",
-      "session": "1-to-1 session"
+      "close": "Close menu",
+      "session": "1-to-1 session",
+      "includes": "What's included",
+      "watch": "Video & photos"
     },
     "book": "Book your seat",
     "bookShort": "Book",

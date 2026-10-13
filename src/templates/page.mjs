@@ -160,8 +160,27 @@ export function header(ctx) {
     <div class="header-actions">
       <a class="lang-switch" href="${links.self[other]}" hreflang="${other}" lang="${other}">${icons.globe}<span>${t.switchTo}</span></a>
       ${ctx.headerCta || `<button class="btn btn-primary btn-sm" type="button" data-checkout>${t.bookShort}</button>`}
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-menu" data-menu-toggle>
+        <span class="menu-icon" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span class="sr" data-menu-label data-open="${esc(t.nav.menu)}" data-close="${esc(t.nav.close)}">${t.nav.menu}</span>
+      </button>
     </div>
   </div>
+  <nav class="site-menu" id="site-menu" aria-label="${esc(t.nav.menu)}" hidden>
+    <div class="wrap">
+      <ul class="menu-list">
+        ${[
+          ['learn', t.nav.learn], ['includes', t.nav.includes], ['coach', t.nav.coach],
+          ['watch', t.nav.watch], ['details', t.nav.details], ['faq', t.nav.faq],
+        ].map(([id, label]) => `<li><a href="${nb}#${id}" data-menu-link>${esc(label)}</a></li>`).join('')}
+        <li><a class="menu-session" href="${links.session[lang]}" data-menu-link${ctx.isSessionPage ? ' aria-current="page"' : ''}>${icons.calendar}<span>${esc(t.nav.session)}</span></a></li>
+      </ul>
+      <div class="menu-foot">
+        <a class="lang-switch menu-lang" href="${links.self[other]}" hreflang="${other}" lang="${other}">${icons.globe}<span>${t.switchTo}</span></a>
+        <a class="menu-ig" href="${site.social.instagram}" target="_blank" rel="noopener">${icons.ig}<span>Instagram</span></a>
+      </div>
+    </div>
+  </nav>
 </header>`;
 }
 
@@ -285,7 +304,7 @@ function curriculum(ctx) {
 
 function includes(ctx) {
   const { c, t } = ctx;
-  return `<section class="section includes" aria-labelledby="inc-title">
+  return `<section class="section includes" id="includes" aria-labelledby="inc-title">
   <div class="wrap">
     <h2 id="inc-title" class="h2">${esc(c.includes.title)}</h2>
     <ul class="perks">

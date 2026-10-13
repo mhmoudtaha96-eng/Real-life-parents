@@ -74,3 +74,20 @@ track('view_item', { currency: data.currency, value: activeTier(data.products[0]
 /* Page-specific features, loaded only where they're used */
 if (document.querySelector('[data-calendar]')) import('./sessions.js').then((m) => m.initCalendar(data, checkout));
 if (document.getElementById('lightbox')) import('./gallery.js').then((m) => m.initGallery(data));
+
+/* Header menu (phones & tablets) */
+const menuBtn = document.querySelector('[data-menu-toggle]');
+const menu = document.getElementById('site-menu');
+if (menuBtn && menu) {
+  const label = menuBtn.querySelector('[data-menu-label]');
+  const setOpen = (open) => {
+    menu.hidden = !open;
+    menuBtn.setAttribute('aria-expanded', String(open));
+    if (label) label.textContent = open ? label.dataset.close : label.dataset.open;
+  };
+  menuBtn.addEventListener('click', () => setOpen(menu.hidden));
+  menu.addEventListener('click', (e) => { if (e.target.closest('[data-menu-link]')) setOpen(false); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !menu.hidden) { setOpen(false); menuBtn.focus(); } });
+  document.addEventListener('click', (e) => { if (!menu.hidden && !e.target.closest('.site-header')) setOpen(false); });
+  window.matchMedia('(min-width: 980px)').addEventListener?.('change', (m) => { if (m.matches) setOpen(false); });
+}
