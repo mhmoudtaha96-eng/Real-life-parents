@@ -27,7 +27,10 @@ You don't need to create any tables. The site creates them by itself on the firs
 - **Cancelled** frees a 1-to-1 time. Unpaid 1-to-1 bookings are cancelled automatically after 24 hours.
 - Click **Details** to read the mother's biggest challenge and to add an internal note.
 
-You can also see the raw data in Cloudflare: **Storage & Databases → D1 → rlp-bookings**, then open the tables view, table `orders`.
+- **Courses**: add a new course (it starts filled in from course #1), edit, duplicate, delete, change the order, tick **Show on website** to show or hide it, and pick which course is the **Home page**.
+- **1-to-1 sessions**: price, session length, the workshop discount (%, which workshop, how many days it's valid, first session only), weekly times, days off, extra one-off times and the page text.
+
+You can also see the raw data in Cloudflare: **Storage & Databases → D1 → rlp-bookings**, then open the tables view, table `orders` (bookings), `courses` and `settings`.
 
 ## If the database isn't connected
 The site keeps working. Bookings still go through InstaPay or bank transfer and WhatsApp, but they aren't saved, and the discount is confirmed by hand on WhatsApp.

@@ -80,13 +80,13 @@ export function structuredData(ctx) {
     {
       '@type': 'Course', '@id': courseId, name: c.name, description: course.seo[lang].description,
       inLanguage: 'ar', provider: { '@id': orgId }, url,
-      audience: { '@type': 'Audience', audienceType: lang === 'ar' ? 'أمهات الأطفال من سنة لـ٤ سنين' : 'Mothers of children aged 1–4' },
+      audience: { '@type': 'Audience', audienceType: course.audienceAge?.max ? (lang === 'ar' ? `أهالي الأطفال من ${course.audienceAge.min} لـ ${course.audienceAge.max} سنين` : `Parents of children aged ${course.audienceAge.min}–${course.audienceAge.max}`) : (lang === 'ar' ? 'الأهالي' : 'Parents') },
       teaches: c.curriculum.items.map((m) => m.title),
       offers,
       hasCourseInstance: {
         '@type': 'CourseInstance', courseMode: 'Online', location: virtual,
         startDate: sessions[0].start, endDate: sessions[sessions.length - 1].end,
-        courseSchedule: { '@type': 'Schedule', repeatCount: sessions.length, duration: 'PT90M', startDate: sessions[0].start.slice(0, 10), endDate: sessions[sessions.length - 1].start.slice(0, 10), scheduleTimezone: site.timezone },
+        courseSchedule: { '@type': 'Schedule', repeatCount: sessions.length, duration: `PT${Math.max(1, Math.round((new Date(sessions[0].end) - new Date(sessions[0].start)) / 60000))}M`, startDate: sessions[0].start.slice(0, 10), endDate: sessions[sessions.length - 1].start.slice(0, 10), scheduleTimezone: site.timezone },
         instructor: { '@id': personId },
         courseWorkload: 'PT3H',
       },

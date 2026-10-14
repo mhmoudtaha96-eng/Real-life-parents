@@ -14,7 +14,7 @@ A bilingual (Arabic / English) landing site for **Real Life Parents** parenting 
 | WhatsApp number (digits only, e.g. `2010xxxxxxxx`) | `src/config/site.json` → `contact.whatsapp` |
 | InstaPay payment link, handle, account name | `src/config/site.json` → `payments.instapay` |
 | InstaPay QR from the app (optional) | put the image in `src/assets/img/`, set `payments.instapay.qrImage` (if empty, a QR is generated from the link) |
-| Early-bird end date | `src/content/courses/mesh-kol-yom-khenaqa.json` → `pricing.tiers[0].until` |
+| Early-bird end date, prices, dates | Admin page → **Courses** → Edit |
 | Shereen's photo | `src/assets/img/shereen.webp` + `src/content/instructors/shereen-gendy.json` → `photo` |
 | GA4 / Meta Pixel / Search Console | `src/config/site.json` → `analytics`, `googleSiteVerification` |
 
@@ -52,12 +52,16 @@ scripts/make-images.mjs       favicons + Open Graph images
 scripts/qr.mjs                QR generator (vendored MIT encoder, no dependency)
 ```
 
-## Add a new course
+## Add a new course (no code needed)
 
-1. Copy `src/content/courses/mesh-kol-yom-khenaqa.json` to `src/content/courses/<new-slug>.json`.
-2. Change `id`, `slug`, content, schedule, and pricing. Set `status` to `open`, `soon` (listed, not bookable yet) or `draft` (not built).
-3. To make it the home page, set `featuredCourse` in `site.json`. The old featured course moves to `/courses/<slug>/` automatically.
-4. Run `node build.mjs`. The sitemap, hreflang tags and structured data update automatically.
+Courses and 1-to-1 settings are edited in the admin page: `/admin/` → **Courses** and **1-to-1 sessions**.
+
+- **+ Add new course** opens a form already filled in from course #1. Change the web address, dates, prices and any text that's different, then save. New courses are saved hidden.
+- Tick **Show on website** to publish a course, untick to hide it. **Home page** chooses the course on the main page; other visible courses get `/courses/<slug>/` and are listed on the home page.
+- **Preview page** shows the page before saving. The sitemap, hreflang tags and structured data update by themselves.
+- The pages are rendered by `worker/index.js` from the database (`courses` and `settings` tables) using the same templates as the build, so Google gets full HTML.
+- `src/content/courses/*.json` and `src/content/sessions/one-to-one.json` are only the **starting content**: they are copied into the database the first time it is empty. After that, edit in the admin page, not in the files.
+- New courses use the generic social-sharing image (`og-ar.png` / `og-en.png`).
 
 ## Moving to full e-commerce later
 

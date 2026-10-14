@@ -189,8 +189,8 @@
       "durationValue": "{n} دقيقة",
       "platform": "المكان",
       "price": "السعر",
-      "attended": "حضرت ورشة «مش كل يوم خناقة!» (خصم {p}٪ على أول جلسة)",
-      "attendedNote": "بنتأكد من حجزك للورشة برقم الواتساب. صالح ٣٠ يوم بعد الورشة.",
+      "attended": "حضرت ورشة «{course}» (خصم {p}٪ على أول جلسة)",
+      "attendedNote": "بنتأكد من حجزك للورشة برقم الواتساب. صالح {d} يوم بعد الورشة.",
       "reserve": "احجزي الميعاد ده",
       "chooseFirst": "اختاري يوم وميعاد الأول",
       "selected": "الميعاد اللي اخترتيه",
@@ -227,6 +227,10 @@
       "swift": "Swift Code",
       "branch": "الفرع",
       "note": "لو بتحوّلي من برا مصر استخدمي الـIBAN والـSwift Code. اكتبي رقم الحجز في بيان التحويل لو أمكن."
+    },
+    "empty": {
+      "title": "مفيش ورش مفتوحة للحجز دلوقتي",
+      "text": "تابعينا على إنستجرام عشان تعرفي أول ما نعلن عن الورشة الجاية، أو احجزي جلسة فردية مع شيرين."
     }
   },
   "en": {
@@ -419,8 +423,8 @@
       "durationValue": "{n} minutes",
       "platform": "Where",
       "price": "Price",
-      "attended": "I attended “Not Every Day a Battle!” ({p}% off your first session)",
-      "attendedNote": "We check your workshop booking by WhatsApp number. Valid for 30 days after the workshop.",
+      "attended": "I attended “{course}” ({p}% off your first session)",
+      "attendedNote": "We check your workshop booking by WhatsApp number. Valid for {d} days after the workshop.",
       "reserve": "Book this time",
       "chooseFirst": "Pick a day and time first",
       "selected": "Your chosen time",
@@ -457,6 +461,10 @@
       "swift": "Swift code",
       "branch": "Branch",
       "note": "Transferring from outside Egypt? Use the IBAN and Swift code. Add your booking ref to the transfer reference if you can."
+    },
+    "empty": {
+      "title": "No workshops are open for booking right now",
+      "text": "Follow us on Instagram to hear about the next workshop first, or book a 1-to-1 session with Shereen."
     }
   }
 }

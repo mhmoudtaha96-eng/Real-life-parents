@@ -75,10 +75,10 @@ ${header(ctx)}
         <div><dt>${icons.screen}${S.platform}</dt><dd>${t.liveOn} ${esc(session.platform)}</dd></div>
         <div><dt>${icons.card}${S.price}</dt><dd class="ses-price"><span data-sum-price>${fmt.num(price.amount, lang)}</span> <small>${t.currency}</small> <s data-sum-was hidden>${fmt.num(price.amount, lang)} ${t.currency}</s> <small class="ses-if" data-sum-if hidden>${esc(S.priceIfEligible)}</small></dd></div>
       </dl>
-      <label class="ses-discount" for="ses-attended">
+      ${price.workshopDiscountPercent > 0 && ctx.discountCourseName ? `<label class="ses-discount" for="ses-attended">
         <input type="checkbox" id="ses-attended" data-sum-discount>
-        <span>${esc(S.attended.replace('{p}', fmt.num(price.workshopDiscountPercent, lang)))}<small>${esc(S.attendedNote)}</small></span>
-      </label>
+        <span>${esc(S.attended.replace('{course}', ctx.discountCourseName).replace('{p}', fmt.num(price.workshopDiscountPercent, lang)))}<small>${esc(S.attendedNote.replace('{d}', fmt.num(price.discountRules?.validDaysAfterWorkshop ?? 30, lang)))}</small></span>
+      </label>` : ''}
       <button class="btn btn-primary btn-lg btn-block" type="button" data-reserve disabled>${S.reserve}</button>
       ${session.sample ? `<p class="ses-sample">${esc(S.sampleNote)}</p>` : ''}
     </aside>
