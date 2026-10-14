@@ -68,14 +68,14 @@ export function createRenderer({ site, i18n, instructors, qrPath = '', assetVers
     if (page.kind === 'course') {
       const course = page.course;
       const selfRoutes = Object.fromEntries(site.languages.map((l) => [l, courseRoute(course, l, featured)]));
-      const isHome = featured && course.slug === featured.slug;
-      return stamp(coursePage({
+            return stamp(coursePage({
         ...common, course, c: course.content[lang],
         url: abs(route),
         alternates: Object.fromEntries(site.languages.map((l) => [l, abs(selfRoutes[l])])),
         buildTier: activeTier(course.pricing, now),
         links: baseLinks(route, lang, content, selfRoutes),
-        otherCourses: isHome ? list.filter((x) => x.slug !== course.slug).map((x) => ({ ...x, href: relLink(route, courseRoute(x, lang, featured)) })) : [],
+        // every visible course is listed on every course page (the home-page course links to the home page)
+        otherCourses: list.filter((x) => x.slug !== course.slug).map((x) => ({ ...x, href: relLink(route, courseRoute(x, lang, featured)) })),
       }));
     }
 

@@ -20,6 +20,9 @@
  *   DELETE /api/admin/courses/:id    delete a course
  *   PUT   /api/admin/settings/session   1-to-1 price, discount, weekly times, page text
  *   POST  /api/admin/preview         render a course from the editor without saving
+ *   POST  /api/admin/publish         "Apply to website": the edited courses + 1-to-1 settings go live
+ *   POST  /api/admin/discard         throw away changes that were not applied
+ * Course and 1-to-1 edits are saved as a draft; visitors keep seeing the last applied version.
  */
 import generated from './content.generated.json' with { type: 'json' };
 import { createRenderer } from '../src/render/site.mjs';
@@ -103,18 +106,60 @@ async function seedContent(db) {
   }
 }
 
-async function loadContent(env, { fresh = false } = {}) {
-  if (!fresh && contentCache && Date.now() - contentCache.at < CONTENT_TTL_MS) return contentCache.content;
+/** Draft = what the admin is editing (courses + settings tables). Not shown on the site until "Apply". */
+async function loadDraft(env) {
   await ensureSchema(env.DB);
   await seedContent(env.DB);
   const { results } = await env.DB.prepare('SELECT * FROM courses ORDER BY sort ASC, created_at ASC').all();
   const courses = results.map((r) => ({ ...JSON.parse(r.data), id: r.id, slug: r.slug, visible: !!r.visible, featured: !!r.featured, sort: r.sort }));
   const sRow = await env.DB.prepare("SELECT data FROM settings WHERE key = 'session'").first();
-  const content = { courses, session: sRow ? JSON.parse(sRow.data) : seed.session };
+  return { courses, session: sRow ? JSON.parse(sRow.data) : seed.session };
+}
+
+/** Live = the snapshot saved by the last "Apply to website". This is what visitors see and can book. */
+async function loadPublished(env) {
+  await ensureSchema(env.DB);
+  const row = await env.DB.prepare("SELECT data, updated_at FROM settings WHERE key = 'published'").first();
+  if (row) return { ...JSON.parse(row.data), publishedAt: row.updated_at };
+  // first run: what is in the database now goes live
+  const draft = await loadDraft(env);
+  const at = nowIso();
+  await env.DB.prepare("INSERT OR IGNORE INTO settings (key, data, updated_at) VALUES ('published', ?, ?)").bind(JSON.stringify(draft), at).run();
+  return { ...draft, publishedAt: at };
+}
+async function loadContent(env, { fresh = false } = {}) {
+  if (!fresh && contentCache && Date.now() - contentCache.at < CONTENT_TTL_MS) return contentCache.content;
+  const content = await loadPublished(env);
   contentCache = { at: Date.now(), content };
   return content;
 }
 const invalidateContent = () => { contentCache = null; };
+
+/** Same content? (ignores key order inside objects) */
+const canon = (v) => (Array.isArray(v) ? v.map(canon) : v && typeof v === 'object' ? Object.fromEntries(Object.keys(v).sort().map((k) => [k, canon(v[k])])) : v);
+const sameContent = (a, b) => JSON.stringify(canon({ courses: a.courses, session: a.session })) === JSON.stringify(canon({ courses: b.courses, session: b.session }));
+
+async function publishDraft(env) {
+  const draft = await loadDraft(env);
+  await env.DB.prepare("INSERT INTO settings (key, data, updated_at) VALUES ('published', ?, ?) ON CONFLICT(key) DO UPDATE SET data = excluded.data, updated_at = excluded.updated_at")
+    .bind(JSON.stringify(draft), nowIso()).run();
+  invalidateContent();
+  return json({ ok: true });
+}
+
+/** Throw away unapplied changes: put the live version back into the editing tables */
+async function discardDraft(env) {
+  const live = await loadPublished(env);
+  const stmts = [env.DB.prepare('DELETE FROM courses')];
+  for (const c of live.courses) {
+    const { visible, featured, sort, ...data } = c;
+    stmts.push(env.DB.prepare('INSERT INTO courses (id, slug, data, visible, featured, sort, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)')
+      .bind(c.id, c.slug, JSON.stringify(data), visible ? 1 : 0, featured ? 1 : 0, sort ?? 0, nowIso(), nowIso()));
+  }
+  if (live.session) stmts.push(env.DB.prepare("INSERT INTO settings (key, data, updated_at) VALUES ('session', ?, ?) ON CONFLICT(key) DO UPDATE SET data = excluded.data, updated_at = excluded.updated_at").bind(JSON.stringify(live.session), nowIso()));
+  await env.DB.batch(stmts);
+  return json({ ok: true });
+}
 
 /** Free 1-to-1 times held by bookings that were never paid */
 async function releaseExpiredHolds(db) {
@@ -411,13 +456,14 @@ function validateCourse(input, existingId, takenSlugs) {
 }
 
 async function adminCourses(env) {
-  const content = await loadContent(env, { fresh: true });
-  return { courses: content.courses, session: content.session };
+  const draft = await loadDraft(env);
+  const live = await loadPublished(env);
+  return { courses: draft.courses, session: draft.session, live: { courses: live.courses, session: live.session, publishedAt: live.publishedAt }, pending: !sameContent(draft, live) };
 }
 
 async function saveCourse(request, env, id) {
   const body = await request.json().catch(() => ({}));
-  const content = await loadContent(env, { fresh: true });
+  const content = await loadDraft(env);
   const existing = id ? content.courses.find((c) => c.id === id) : null;
   if (id && !existing) return json({ error: 'not_found' }, 404);
   const taken = content.courses.filter((c) => c.id !== id).map((c) => c.slug);
@@ -430,7 +476,7 @@ async function saveCourse(request, env, id) {
     let newId = course.id, n = 2;
     while (content.courses.some((c) => c.id === newId)) newId = `${course.id}-${n++}`;
     course.id = newId;
-    await env.DB.prepare('INSERT INTO courses (id, slug, data, visible, featured, sort, created_at, updated_at) VALUES (?, ?, ?, 0, 0, ?, ?, ?)')
+    await env.DB.prepare('INSERT INTO courses (id, slug, data, visible, featured, sort, created_at, updated_at) VALUES (?, ?, ?, 1, 0, ?, ?, ?)')
       .bind(newId, course.slug, JSON.stringify(course), maxSort + 1, nowIso(), nowIso()).run();
   }
   invalidateContent();
@@ -464,7 +510,7 @@ async function deleteCourse(env, id) {
 
 async function saveSessionSettings(request, env) {
   const body = clean(await request.json().catch(() => ({}))) || {};
-  const content = await loadContent(env, { fresh: true });
+  const content = await loadDraft(env);
   const cur = content.session || seed.session;
   const errors = [];
   const amount = Math.round(Number(body.price?.amount));
@@ -513,7 +559,7 @@ async function saveSessionSettings(request, env) {
 /** Preview a course from the editor (also unsaved changes) exactly as the page will look */
 async function previewCourse(request, env) {
   const body = await request.json().catch(() => ({}));
-  const content = await loadContent(env, { fresh: true });
+  const content = await loadDraft(env);
   const input = { ...(body.course || {}) };
   if (!SLUG_RE.test(String(input.slug || ''))) input.slug = 'preview-course';
   const { course, errors } = validateCourse(input, body.id || 'preview', []);
@@ -599,6 +645,8 @@ export default {
         if (m && request.method === 'DELETE') return await deleteCourse(env, m[1]);
         if (pathname === '/api/admin/settings/session' && request.method === 'PUT') return await saveSessionSettings(request, env);
         if (pathname === '/api/admin/preview' && request.method === 'POST') return await previewCourse(request, env);
+        if (pathname === '/api/admin/publish' && request.method === 'POST') return await publishDraft(env);
+        if (pathname === '/api/admin/discard' && request.method === 'POST') return await discardDraft(env);
       }
       return json({ error: 'not_found' }, 404);
     } catch (e) {

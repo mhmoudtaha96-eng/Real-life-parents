@@ -15,7 +15,8 @@
       "close": "إغلاق القائمة",
       "session": "جلسة فردية",
       "includes": "هتحصلي على إيه",
-      "watch": "فيديو وصور لشيرين"
+      "watch": "فيديو وصور لشيرين",
+      "courses": "كل الورش"
     },
     "book": "احجزي مكانك",
     "bookShort": "احجزي",
@@ -60,6 +61,7 @@
     ],
     "faqTitle": "أسئلة شائعة",
     "moreCourses": "ورش وكورسات تانية",
+    "courseCardCta": "التفاصيل والحجز",
     "comingSoon": "قريبًا",
     "footerTag": "تربية واقعية لأمهات حقيقيات",
     "followIg": "تابعينا على إنستجرام",
@@ -249,7 +251,8 @@
       "close": "Close menu",
       "session": "1-to-1 session",
       "includes": "What's included",
-      "watch": "Video & photos"
+      "watch": "Video & photos",
+      "courses": "All workshops"
     },
     "book": "Book your seat",
     "bookShort": "Book",
@@ -294,6 +297,7 @@
     ],
     "faqTitle": "Questions",
     "moreCourses": "More workshops and courses",
+    "courseCardCta": "Details & booking",
     "comingSoon": "Coming soon",
     "footerTag": "Real-life parenting for real mothers",
     "followIg": "Follow us on Instagram",

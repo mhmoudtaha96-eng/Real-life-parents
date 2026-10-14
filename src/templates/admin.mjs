@@ -73,6 +73,15 @@ a{color:var(--calm)}
 .page-head{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding-block:18px 10px}
 .page-head h2{margin:0;font-size:22px;margin-inline-end:auto}
 
+/* apply-to-website bar */
+.publish{border-top:1px solid var(--line)}
+.publish.pending{background:var(--sun-soft);border-color:#F1D27A}
+.publish.live{background:var(--mint)}
+.publish-in{display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-height:52px;padding-block:6px}
+.publish-in p{margin:0;margin-inline-end:auto;font-weight:600}
+.publish.live .btn{display:none}
+.pill.chg{background:var(--sun-soft);color:#7A5A00}
+
 /* courses list */
 .clist{display:grid;gap:12px;margin-bottom:40px}
 .ccard{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px 16px;display:grid;grid-template-columns:auto 1fr auto;gap:12px 16px;align-items:start}
@@ -137,6 +146,13 @@ a{color:var(--calm)}
     </nav>
     <a class="btn sm" href="/" target="_blank" rel="noopener">View website ↗</a>
     <button class="btn sm" id="logout" type="button">Sign out</button>
+  </div>
+  <div class="publish" id="publish" hidden>
+    <div class="wrap publish-in">
+      <p id="publish-text"></p>
+      <button class="btn sm" type="button" id="discard">Discard changes</button>
+      <button class="btn sm primary" type="button" id="apply">Apply to website</button>
+    </div>
   </div></header>
 
   <!-- ============ BOOKINGS ============ -->
@@ -168,7 +184,7 @@ a{color:var(--calm)}
         <h2>Courses</h2>
         <button class="btn primary" type="button" id="add-course">+ Add new course</button>
       </div>
-      <p class="help" style="margin:0 0 14px">Tick <b>Show on website</b> to publish a course, untick it to hide it. The course marked <b>Home page</b> is the main page of the website; the other visible courses get their own page and are listed on the home page. Changes are live within a few seconds.</p>
+      <p class="help" style="margin:0 0 14px">Tick <b>Show on website</b> for every course that should be on the site. The course marked <b>Home page</b> is the main page; every other ticked course gets its own page and is listed under “More workshops” on all course pages. Nothing changes on the website until you click <b>Apply to website</b> at the top.</p>
       <div class="clist" id="clist"></div>
     </div>
     <form id="course-form" class="editor" novalidate hidden></form>

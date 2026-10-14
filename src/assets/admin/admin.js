@@ -72,6 +72,7 @@ async function start() {
   try { data = await (await api('/api/admin/courses')).json(); } catch { return; }
   store = data;
   fillProductFilter();
+  renderPublishBar();
   $('#login').hidden = true; $('#app').hidden = false;
   const h = location.hash.slice(1);
   setView(['bookings', 'courses', 'settings'].includes(h) ? h : 'bookings');
@@ -168,12 +169,67 @@ $('#export').addEventListener('click', async () => {
 /* =================================================================
    COURSES
    ================================================================= */
-let store = { courses: [], session: null };
+let store = { courses: [], session: null, live: { courses: [] }, pending: false };
+let loadSeq = 0;
 async function loadCourses() {
-  try { store = await (await api('/api/admin/courses')).json(); } catch { return; }
+  const seq = ++loadSeq;
+  let data;
+  try { data = await (await api('/api/admin/courses')).json(); } catch { return; }
+  if (seq !== loadSeq) return; // a newer reload is on its way
+  store = data;
   fillProductFilter();
+  renderPublishBar();
   if (view === 'courses' && $('#course-form').hidden) renderCourseList();
 }
+
+/* ---------- Apply to website ---------- */
+// Every change in Courses and 1-to-1 sessions is saved as a draft. Visitors keep seeing the last applied
+// version until "Apply to website" is clicked.
+const canon = (v) => (Array.isArray(v) ? v.map(canon) : v && typeof v === 'object' ? Object.fromEntries(Object.keys(v).sort().map((k) => [k, canon(v[k])])) : v);
+const same = (a, b) => JSON.stringify(canon(a)) === JSON.stringify(canon(b));
+function changeCount() {
+  const live = store.live?.courses || [];
+  let n = 0;
+  for (const c of store.courses || []) { const l = live.find((x) => x.id === c.id); if (!l || !same(c, l)) n++; }
+  n += live.filter((l) => !(store.courses || []).some((c) => c.id === l.id)).length;
+  if (store.live?.session && !same(store.session, store.live.session)) n++;
+  return n;
+}
+function renderPublishBar() {
+  const bar = $('#publish');
+  bar.hidden = false;
+  const n = store.pending ? Math.max(1, changeCount()) : 0;
+  bar.className = 'publish ' + (n ? 'pending' : 'live');
+  $('#publish-text').textContent = n
+    ? `${n} change${n > 1 ? 's' : ''} saved but not on the website yet. Click “Apply to website” when you're ready.`
+    : `The website is up to date${store.live?.publishedAt ? ' (last applied ' + fmtDate(store.live.publishedAt) + ')' : ''}.`;
+}
+$('#apply').addEventListener('click', async () => {
+  if (dirty) { toast('Save or cancel the form you are editing first'); return; }
+  const shown = (store.courses || []).filter((c) => c.visible);
+  const names = shown.map((c, i) => `${i + 1}. ${c.content?.en?.name || c.content?.ar?.name}`).join('\n');
+  if (!confirm(`Apply all changes to the live website?\n\nCourses that will be on the website (${shown.length}):\n${names || '(none)'}`)) return;
+  const btn = $('#apply'); btn.disabled = true;
+  try {
+    const r = await api('/api/admin/publish', { method: 'POST', body: '{}' });
+    toast(r.ok ? 'Done. The website now shows your changes.' : 'Could not apply. Try again.', 4000);
+  } catch { /* */ } finally { btn.disabled = false; }
+  await loadCourses();
+  if (view === 'settings') renderSessionForm();
+});
+$('#discard').addEventListener('click', async () => {
+  if (!confirm('Throw away all changes that are not on the website yet?\n\nCourses and 1-to-1 settings go back to what the website shows now. This cannot be undone.')) return;
+  try { const r = await api('/api/admin/discard', { method: 'POST', body: '{}' }); toast(r.ok ? 'Changes discarded' : 'Could not discard'); } catch { /* */ }
+  dirty = false;
+  await loadCourses();
+  if (view === 'courses') { showCourseList(); renderCourseList(); }
+  if (view === 'settings') renderSessionForm();
+});
+
+/* one change at a time, so quick clicks never overwrite each other */
+let queue = Promise.resolve();
+const enqueue = (fn) => (queue = queue.then(fn, fn));
+const liveOf = (c) => (store.live?.courses || []).find((x) => x.id === c.id);
 const courseUrl = (c) => (c.featured ? '/' : `/courses/${c.slug}/`);
 function priceFacts(c) {
   const tiers = c.pricing?.tiers || [];
@@ -196,7 +252,8 @@ function renderCourseList() {
       <div class="cmain">
         <h3><span dir="rtl">${esc(c.content?.ar?.name)}</span><small dir="ltr">${esc(c.content?.en?.name)}</small></h3>
         <p style="margin:6px 0 0;display:flex;gap:6px;flex-wrap:wrap">
-          ${c.visible ? '<span class="pill on">On the website</span>' : '<span class="pill off">Hidden</span>'}
+          ${liveOf(c)?.visible ? '<span class="pill on">Live on website</span>' : '<span class="pill off">Not on website</span>'}
+          ${!liveOf(c) ? '<span class="pill chg">New: not applied yet</span>' : !same(c, liveOf(c)) ? '<span class="pill chg">Changes not applied yet</span>' : ''}
           ${c.visible && c.id === homeId ? '<span class="pill home">Home page</span>' : ''}
           ${past ? '<span class="pill past">Finished</span>' : ''}
         </p>
@@ -221,16 +278,23 @@ function renderCourseList() {
     </article>`;
   }).join('') : '<p class="empty card">No courses yet. Click “Add new course”.</p>';
 }
-$('#clist').addEventListener('change', async (e) => {
+$('#clist').addEventListener('change', (e) => {
   const el = e.target.closest('[data-act]'); if (!el) return;
   const id = el.closest('[data-id]').dataset.id;
   const act = el.dataset.act;
   const body = act === 'visible' ? { visible: el.checked } : { featured: true };
-  try {
-    const r = await api('/api/admin/courses/' + encodeURIComponent(id), { method: 'PATCH', body: JSON.stringify(body) });
-    toast(r.ok ? (act === 'visible' ? (el.checked ? 'Course is now on the website' : 'Course hidden from the website') : 'This course is now the home page') : 'Could not update');
-  } catch { /* */ }
-  loadCourses();
+  // update the list right away, then save in order
+  const c = store.courses.find((x) => x.id === id);
+  if (act === 'visible') c.visible = el.checked;
+  else { store.courses.forEach((x) => (x.featured = x.id === id)); c.visible = true; }
+  store.pending = true; renderPublishBar(); renderCourseList();
+  enqueue(async () => {
+    try {
+      const r = await api('/api/admin/courses/' + encodeURIComponent(id), { method: 'PATCH', body: JSON.stringify(body) });
+      toast(r.ok ? (act === 'visible' ? (body.visible ? 'Will be on the website after “Apply to website”' : 'Will be hidden after “Apply to website”') : 'Will be the home page after “Apply to website”') : 'Could not update', 3200);
+    } catch { /* */ }
+  });
+  enqueue(loadCourses);
 });
 $('#clist').addEventListener('click', async (e) => {
   const el = e.target.closest('button[data-act]'); if (!el) return;
@@ -242,16 +306,16 @@ $('#clist').addEventListener('click', async (e) => {
   if (el.dataset.act === 'copy') return openCourseForm(c, 'new');
   if (el.dataset.act === 'delete') {
     if (!confirm(`Delete “${c.content?.en?.name || c.content?.ar?.name}”?\n\nThis can't be undone. Bookings already made stay in the Bookings list.\nTip: to just take it off the website, untick “Show on website” instead.`)) return;
-    try { const r = await api('/api/admin/courses/' + encodeURIComponent(id), { method: 'DELETE' }); toast(r.ok ? 'Course deleted' : 'Could not delete'); } catch { /* */ }
-    return loadCourses();
+    await enqueue(async () => { try { const r = await api('/api/admin/courses/' + encodeURIComponent(id), { method: 'DELETE' }); toast(r.ok ? 'Deleted. It leaves the website after “Apply to website”.' : 'Could not delete', 3200); } catch { /* */ } });
+    return enqueue(loadCourses);
   }
   if (el.dataset.act === 'up' || el.dataset.act === 'down') {
     const j = el.dataset.act === 'up' ? i - 1 : i + 1;
     if (j < 0 || j >= list.length) return;
     const order = list.map((x) => x.id);
     [order[i], order[j]] = [order[j], order[i]];
-    try { await Promise.all(order.map((cid, n) => api('/api/admin/courses/' + encodeURIComponent(cid), { method: 'PATCH', body: JSON.stringify({ sort: n }) }))); } catch { /* */ }
-    loadCourses();
+    await enqueue(async () => { try { await Promise.all(order.map((cid, n) => api('/api/admin/courses/' + encodeURIComponent(cid), { method: 'PATCH', body: JSON.stringify({ sort: n }) }))); } catch { /* */ } });
+    enqueue(loadCourses);
   }
 });
 $('#add-course').addEventListener('click', () => openCourseForm((store.courses || [])[0] || null, 'new'));
@@ -374,7 +438,7 @@ function openCourseForm(src, mode) {
       <button class="btn sm" type="button" data-back>← All courses</button>
       <h2>${mode === 'edit' ? 'Edit course' : 'New course'}</h2>
     </div>
-    ${mode === 'new' && src ? `<p class="note">Filled in from “${esc(editing.sourceName)}”. Add the new dates and web address, then change any text or price that is different. New courses are saved hidden. Tick “Show on website” in the list when it's ready.</p>` : ''}
+    ${mode === 'new' && src ? `<p class="note">Filled in from “${esc(editing.sourceName)}”. Add the new dates and web address, then change any text or price that is different. Nothing goes on the website until you click “Apply to website” at the top.</p>` : ''}
     <div class="card">
       <h3>Basics</h3>
       <div class="grid" style="margin-top:10px">
@@ -550,7 +614,7 @@ async function saveCourse() {
       return;
     }
     dirty = false;
-    toast(editing.mode === 'edit' ? 'Saved. The website is updated.' : 'New course saved (hidden). Tick “Show on website” when it is ready.', 4000);
+    toast(editing.mode === 'edit' ? 'Saved. Click “Apply to website” to put it live.' : 'New course saved. Click “Apply to website” to put it live.', 4500);
     await loadCourses();
     showCourseList(); renderCourseList();
   } catch { /* shown by api() */ } finally { btn.disabled = false; }
@@ -681,7 +745,8 @@ sf.addEventListener('submit', async (e) => {
     const b = await res.json().catch(() => ({}));
     if (!res.ok) { $('#save-err').textContent = 'Could not save: check ' + (b.fields || []).join(', '); return; }
     store.session = b.session; dirty = false;
-    toast('Saved. The booking page is updated.');
+    toast('Saved. Click “Apply to website” to put it live.', 3500);
+    loadCourses();
     renderSessionForm();
   } catch { /* */ } finally { btn.disabled = false; }
 });

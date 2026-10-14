@@ -1,6 +1,6 @@
 import { icons } from './icons.mjs';
 import { heroArt } from './scribble.mjs';
-import { esc, fmt, structuredData } from './helpers.mjs';
+import { esc, fmt, structuredData, activeTier } from './helpers.mjs';
 import { COUNTRIES, DEFAULT_COUNTRY, countryByIso } from '../assets/js/data/countries.js';
 
 /**
@@ -21,9 +21,9 @@ ${includes(ctx)}
 ${coach(ctx)}
 ${media(ctx)}
 ${details(ctx)}
+${moreCourses(ctx)}
 ${how(ctx)}
 ${faq(ctx)}
-${moreCourses(ctx)}
 ${finalCta(ctx)}
 </main>
 ${footer(ctx)}
@@ -154,6 +154,7 @@ export function header(ctx) {
       <a href="${nb}#learn">${t.nav.learn}</a>
       <a href="${nb}#coach">${t.nav.coach}</a>
       <a href="${nb}#details">${t.nav.details}</a>
+      ${ctx.otherCourses?.length ? `<a href="#courses">${t.nav.courses}</a>` : ''}
       <a href="${links.session[lang]}"${ctx.isSessionPage ? ' aria-current="page"' : ''}>${t.nav.session}</a>
       <a href="${nb}#faq">${t.nav.faq}</a>
     </nav>
@@ -171,7 +172,7 @@ export function header(ctx) {
       <ul class="menu-list">
         ${[
           ['learn', t.nav.learn], ['includes', t.nav.includes], ['coach', t.nav.coach],
-          ['watch', t.nav.watch], ['details', t.nav.details], ['faq', t.nav.faq],
+          ['watch', t.nav.watch], ['details', t.nav.details], ...(ctx.otherCourses?.length ? [['courses', t.nav.courses]] : []), ['faq', t.nav.faq],
         ].map(([id, label]) => `<li><a href="${nb}#${id}" data-menu-link>${esc(label)}</a></li>`).join('')}
         <li><a class="menu-session" href="${links.session[lang]}" data-menu-link${ctx.isSessionPage ? ' aria-current="page"' : ''}>${icons.calendar}<span>${esc(t.nav.session)}</span></a></li>
       </ul>
@@ -460,15 +461,23 @@ function faq(ctx) {
 function moreCourses(ctx) {
   const { otherCourses, t, lang } = ctx;
   if (!otherCourses?.length) return '';
-  return `<section class="section more" aria-labelledby="more-title">
+  const now = new Date();
+  return `<section class="section more" id="courses" aria-labelledby="more-title">
   <div class="wrap">
     <h2 id="more-title" class="h2">${t.moreCourses}</h2>
     <ul class="course-grid">
-      ${otherCourses.map((oc) => `<li><a class="course-card" href="${oc.href}">
-        <h3>${esc(oc.content[lang].name)}</h3>
-        <p>${esc(oc.content[lang].kicker)}</p>
-        ${oc.status === 'soon' ? `<span class="badge">${t.comingSoon}</span>` : ''}
-      </a></li>`).join('')}
+      ${otherCourses.map((oc) => {
+        const oc_c = oc.content[lang] || oc.content.ar;
+        const ss = oc.schedule?.sessions || [];
+        const tier = oc.pricing?.tiers?.length ? activeTier(oc.pricing, now) : null;
+        return `<li><a class="course-card" href="${oc.href}">
+        <h3>${esc(oc_c.name)}</h3>
+        ${oc_c.kicker ? `<p>${esc(oc_c.kicker)}</p>` : ''}
+        ${ss.length ? `<p class="course-card-meta">${icons.calendar}<span>${esc(fmt.dayList(ss.map((x) => x.start), lang))}</span></p>` : ''}
+        ${tier ? `<p class="course-card-meta">${icons.card}<span><b>${fmt.num(tier.amount, lang)}</b> ${t.currency}</span></p>` : ''}
+        ${oc.status === 'soon' ? `<span class="badge">${t.comingSoon}</span>` : `<span class="course-card-cta">${esc(t.courseCardCta)}</span>`}
+      </a></li>`;
+      }).join('')}
     </ul>
   </div>
 </section>`;

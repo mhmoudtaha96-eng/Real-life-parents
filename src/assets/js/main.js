@@ -89,5 +89,5 @@ if (menuBtn && menu) {
   menu.addEventListener('click', (e) => { if (e.target.closest('[data-menu-link]')) setOpen(false); });
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !menu.hidden) { setOpen(false); menuBtn.focus(); } });
   document.addEventListener('click', (e) => { if (!menu.hidden && !e.target.closest('.site-header')) setOpen(false); });
-  window.matchMedia('(min-width: 980px)').addEventListener?.('change', (m) => { if (m.matches) setOpen(false); });
+  window.matchMedia('(min-width: 1100px)').addEventListener?.('change', (m) => { if (m.matches) setOpen(false); });
 }

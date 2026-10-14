@@ -56,8 +56,9 @@ scripts/qr.mjs                QR generator (vendored MIT encoder, no dependency)
 
 Courses and 1-to-1 settings are edited in the admin page: `/admin/` → **Courses** and **1-to-1 sessions**.
 
-- **+ Add new course** opens a form already filled in from course #1. Change the web address, dates, prices and any text that's different, then save. New courses are saved hidden.
-- Tick **Show on website** to publish a course, untick to hide it. **Home page** chooses the course on the main page; other visible courses get `/courses/<slug>/` and are listed on the home page.
+- **+ Add new course** opens a form already filled in from course #1. Change the web address, dates, prices and any text that's different, then save.
+- Tick **Show on website** for each course that should be on the site. **Home page** chooses the course on the main page; every other ticked course gets `/courses/<slug>/` and is listed under "More workshops" (and the "All workshops" menu link) on every course page.
+- **Nothing goes live until you click _Apply to website_** in the yellow bar at the top. Until then visitors see the last applied version and can only book those courses. **Discard changes** goes back to what the website shows.
 - **Preview page** shows the page before saving. The sitemap, hreflang tags and structured data update by themselves.
 - The pages are rendered by `worker/index.js` from the database (`courses` and `settings` tables) using the same templates as the build, so Google gets full HTML.
 - `src/content/courses/*.json` and `src/content/sessions/one-to-one.json` are only the **starting content**: they are copied into the database the first time it is empty. After that, edit in the admin page, not in the files.
