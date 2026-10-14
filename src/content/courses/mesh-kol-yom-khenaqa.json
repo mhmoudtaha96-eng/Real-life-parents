@@ -32,12 +32,12 @@
       {
         "id": "early",
         "amount": 1200,
-        "_todo": "TODO: confirm the real early-bird end date with the client",
-        "until": "2026-11-01T23:59:59+02:00",
+        "until": "2026-11-04T23:59:59+02:00",
         "label": {
           "ar": "سعر الحجز المبكر",
           "en": "Early-bird price"
-        }
+        },
+        "_note": "Early-bird ends 5 days before the workshop (workshop starts 9 Nov 2026, 8 pm Cairo)."
       },
       {
         "id": "regular",

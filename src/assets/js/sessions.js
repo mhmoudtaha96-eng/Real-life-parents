@@ -71,6 +71,14 @@ export function initCalendar(data, checkout) {
     .split(' ').pop() === new Intl.DateTimeFormat('en-US', { timeZone: TZ, hour: 'numeric', timeZoneName: 'longOffset' }).format(new Date()).split(' ').pop();
 
   const fmtDay = (date, opts) => new Intl.DateTimeFormat(loc, { timeZone: 'UTC', ...opts }).format(new Date(`${date}T12:00:00Z`));
+  const durMs = (A.durationMinutes || 60) * 6e4;
+  const fmtRange = (at, tz) => {
+    const f = new Intl.DateTimeFormat(loc, { timeZone: tz, hour: 'numeric', minute: '2-digit' });
+    const end = new Date(at.getTime() + durMs);
+    // Arabic: «من ٥:٠٠ لـ ٦:٠٠ م» (a dash between numbers reads backwards in right-to-left text)
+    if (data.lang === 'ar') return `من ${f.format(at).replace(/\s?[صم]$/, '')} لـ ${f.format(end)}`;
+    try { return f.formatRange(at, end); } catch { return `${f.format(at)} – ${f.format(end)}`; }
+  };
   const fmtTime = (at, tz) => new Intl.DateTimeFormat(loc, { timeZone: tz, hour: 'numeric', minute: '2-digit' }).format(at);
 
   // First day of the week: Saturday for Arabic (as in Egypt), Sunday for English
@@ -122,7 +130,7 @@ export function initCalendar(data, checkout) {
       b.setAttribute('role', 'radio');
       b.setAttribute('aria-checked', String(selSlot === s));
       b.disabled = s.status !== 'open';
-      b.innerHTML = `<b>${fmtTime(s.at, TZ)}</b>${s.status === 'booked' ? `<small>${S.booked}</small>` : (!sameTz ? `<small>${S.yourTime.replace('{t}', fmtTime(s.at, visitorTz))}</small>` : '')}`;
+      b.innerHTML = `<b>${fmtRange(s.at, TZ)}</b>${s.status === 'booked' ? `<small>${S.booked}</small>` : (!sameTz ? `<small>${S.yourTime.replace('{t}', fmtRange(s.at, visitorTz))}</small>` : '')}`;
       b.addEventListener('click', () => { selSlot = s; renderTimes(); renderSummary(); track('select_slot', { date: selDate, time: s.time }); });
       timesBox.append(b);
     }
@@ -132,7 +140,7 @@ export function initCalendar(data, checkout) {
   const productId = () => A.id;
   const fullPrice = product.pricing.tiers[0].amount;
   const price = () => (discount?.checked ? Math.round(fullPrice * (1 - (product.discountPercent || 0) / 100)) : fullPrice);
-  const slotLabel = () => `${fmtDay(selDate, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}، ${fmtTime(selSlot.at, TZ)}`.replace('،', data.lang === 'ar' ? '،' : ',');
+  const slotLabel = () => `${fmtDay(selDate, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}، ${fmtRange(selSlot.at, TZ)}`.replace('،', data.lang === 'ar' ? '،' : ',');
 
   function renderSummary() {
     sumPrice.textContent = nf.format(price());

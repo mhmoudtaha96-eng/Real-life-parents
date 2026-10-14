@@ -519,12 +519,12 @@ export function checkoutDialog(ctx) {
     <form class="co-step" data-step="1" id="co-form" novalidate>
       <p class="co-notice" data-co-notice="form" role="alert" hidden></p>
       <div class="field">
-        <label for="co-name">${k.name}</label>
+        <label for="co-name">${k.name} <span class="req" aria-hidden="true">*</span></label>
         <input id="co-name" name="name" type="text" autocomplete="name" maxlength="60" placeholder="${esc(k.namePh)}" required aria-describedby="co-name-err">
         <p class="err" id="co-name-err" aria-live="polite" hidden></p>
       </div>
       <div class="field">
-        <label for="co-phone">${k.phone}</label>
+        <label for="co-phone">${k.phone} <span class="req" aria-hidden="true">*</span></label>
         <div class="phone-group" dir="ltr">
           <label class="sr" for="co-country">${k.country}</label>
           <select id="co-country" name="country" autocomplete="country">
@@ -536,14 +536,14 @@ export function checkoutDialog(ctx) {
         <p class="err" id="co-phone-err" aria-live="polite" hidden></p>
       </div>
       <fieldset class="field">
-        <legend>${k.childAge}</legend>
+        <legend>${k.childAge} <span class="req" aria-hidden="true">*</span></legend>
         <div class="chips">
           ${k.childAgeOpts.map((o, i) => `<label class="chip"><input type="radio" name="age" value="${esc(o)}" id="co-age-${i}"><span>${esc(o)}</span></label>`).join('')}
         </div>
         <p class="err" id="co-age-err" hidden>${k.errAge}</p>
       </fieldset>
       <div class="field">
-        <label for="co-problem">${k.problem}</label>
+        <label for="co-problem">${k.problem} <span class="req">* ${k.required}</span></label>
         <textarea id="co-problem" name="problem" rows="4" maxlength="1000" placeholder="${esc(k.problemPh)}" required aria-describedby="co-problem-hint co-problem-err"></textarea>
         <p class="hint" id="co-problem-hint"><span>${k.problemHint}</span> <span class="count" data-count dir="ltr">0 / 1000</span></p>
         <p class="err" id="co-problem-err" aria-live="polite" hidden></p>

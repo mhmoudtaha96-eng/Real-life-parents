@@ -7,8 +7,7 @@
   "durationMinutes": 60,
   "platform": "Zoom",
   "price": {
-    "_todo": "TODO: confirm the real price and duration of a private session",
-    "amount": 1000,
+    "amount": 950,
     "currency": "EGP",
     "workshopDiscountPercent": 30,
     "discountRules": {
@@ -62,6 +61,7 @@
       "intro": "جلسة خاصة بيكي وبطفلك، نناقش فيها تحدياتك ونشتغل على خطوات عملية تناسب احتياجاتك واحتياجاته. اختاري اليوم والميعاد اللي يناسبك من التقويم.",
       "points": [
         "جلسة ٦٠ دقيقة أونلاين على Zoom",
+        "المواعيد: من الاثنين للخميس، من ٥ لـ ٨ مساءً بتوقيت مصر",
         "نناقش تحدياتك الخاصة مع طفلك ونشتغل على خطوات عملية",
         "خصم ٣٠٪ على أول جلسة لو حضرتي ورشة «مش كل يوم خناقة!»، صالح لمدة ٣٠ يوم بعد الورشة"
       ]
@@ -76,6 +76,7 @@
       "intro": "A private session about you and your child, where we discuss your own challenges and work on practical steps that fit your needs and theirs. Pick the day and time that suits you.",
       "points": [
         "60-minute session online on Zoom",
+        "Available Monday to Thursday, 5 to 8 pm Cairo time",
         "We discuss your own challenges with your child and work on practical steps",
         "30% off your first session if you attended “Not Every Day a Battle!”, valid for 30 days after the workshop"
       ]

@@ -97,7 +97,7 @@
       "copy": "نسخ",
       "copied": "اتنسخ",
       "close": "إغلاق",
-      "waMessage": "أهلًا، حجزت مكان في ورشة «{course}».\nرقم الحجز: {ref}\nالاسم: {name}\nالواتساب: {phone} ({country})\nسن الطفل: {age}\nالمشكلة: {problem}\nالمبلغ: {amount}\nطريقة الدفع: {method}\nمرفق صورة التحويل.",
+      "waMessage": "*حجز جديد: ورشة «{course}»*\n\n📌 *رقم الحجز:* {ref}\n\n👤 *الاسم:* {name}\n📱 *الواتساب:* {phone}\n🌍 *الدولة:* {country}\n👶 *سن الطفل:* {age}\n\n❓ *أكبر مشكلة أو موقف صعب مع طفلي:*\n{problem}\n\n💳 *المبلغ:* {amount}\n🏦 *طريقة الدفع:* {method}\n\n📎 مرفق صورة التحويل.",
       "country": "الدولة",
       "phoneHint": "هنبعتلك لينك Zoom والتسجيلات على الرقم ده.",
       "err": {
@@ -127,10 +127,10 @@
       "outsideEgypt": "InstaPay بيشتغل بحسابات البنوك والمحافظ المصرية بس. لو إنتِ برا مصر، اختاري «تحويل بنكي» وحوّلي بالـIBAN، أو كلمينا على واتساب.",
       "askOtherPayment": "اسألي عن طريقة دفع تانية",
       "otherPaymentMsg": "أهلًا، عايزة أحجز في ورشة «{course}» ومش معايا InstaPay. رقم الحجز: {ref}. إيه طرق الدفع المتاحة من {country}؟",
-      "waMessageSession": "أهلًا، حجزت {course}.\nالموعد: {slot} (بتوقيت مصر)\nرقم الحجز: {ref}\nالاسم: {name}\nالواتساب: {phone} ({country})\nسن الطفل: {age}\nالمشكلة: {problem}\nالمبلغ: {amount}\nطريقة الدفع: {method}\nمرفق صورة التحويل.",
+      "waMessageSession": "*حجز جديد: {course}*\n\n📌 *رقم الحجز:* {ref}\n🗓️ *الموعد:* {slot} (بتوقيت مصر)\n\n👤 *الاسم:* {name}\n📱 *الواتساب:* {phone}\n🌍 *الدولة:* {country}\n👶 *سن الطفل:* {age}\n\n❓ *أكبر مشكلة أو موقف صعب مع طفلي:*\n{problem}\n\n💳 *المبلغ:* {amount}\n🏦 *طريقة الدفع:* {method}\n\n📎 مرفق صورة التحويل.",
       "problem": "إيه أكبر مشكلة أو موقف بيبقى صعب مع طفلك؟",
       "problemPh": "احكيلنا باختصار، مثلًا: بيصرخ كل ما أقفل الموبايل…",
-      "problemHint": "ده بيساعد شيرين تجهّز للقاء وتركّز على اللي يهمك.",
+      "problemHint": "إجابة السؤال ده مطلوبة لإتمام الحجز، وبتساعد شيرين تركّز على اللي يهمك.",
       "saving": "لحظة…",
       "slotTaken": "الميعاد ده اتحجز لسه. اختاري ميعاد تاني من التقويم.",
       "tooMany": "عملتي حجوزات كتير في وقت قصير. حاولي تاني بعد شوية أو كلمينا على واتساب.",
@@ -142,7 +142,8 @@
         "expired": "الخصم صالح لمدة ٣٠ يوم بعد الورشة بس، والميعاد ده بعد المدة دي.",
         "already_used": "الخصم بيتطبق على أول جلسة بس، واستخدمتيه قبل كده.",
         "manual": "هنتأكد من خصم الورشة على واتساب قبل تأكيد الحجز."
-      }
+      },
+      "required": "إجباري"
     },
     "instapay": {
       "label": "InstaPay",
@@ -326,7 +327,7 @@
       "copy": "Copy",
       "copied": "Copied",
       "close": "Close",
-      "waMessage": "Hi, I've booked a seat in “{course}”.\nBooking ref: {ref}\nName: {name}\nWhatsApp: {phone} ({country})\nChild's age: {age}\nMain challenge: {problem}\nAmount: {amount}\nPayment method: {method}\nTransfer screenshot attached.",
+      "waMessage": "*New booking: “{course}” workshop*\n\n📌 *Booking ref:* {ref}\n\n👤 *Name:* {name}\n📱 *WhatsApp:* {phone}\n🌍 *Country:* {country}\n👶 *Child's age:* {age}\n\n❓ *Biggest challenge with my child:*\n{problem}\n\n💳 *Amount:* {amount}\n🏦 *Payment method:* {method}\n\n📎 Transfer screenshot attached.",
       "country": "Country",
       "phoneHint": "We'll send your Zoom link and recordings to this number.",
       "err": {
@@ -356,10 +357,10 @@
       "outsideEgypt": "InstaPay only works with Egyptian bank accounts and wallets. If you're outside Egypt, choose “Bank transfer” and pay with the IBAN, or message us on WhatsApp.",
       "askOtherPayment": "Ask about another payment method",
       "otherPaymentMsg": "Hi, I'd like to book “{course}” but I don't have InstaPay. Booking ref: {ref}. Which payment methods are available from {country}?",
-      "waMessageSession": "Hi, I've booked a {course}.\nAppointment: {slot} (Cairo time)\nBooking ref: {ref}\nName: {name}\nWhatsApp: {phone} ({country})\nChild's age: {age}\nMain challenge: {problem}\nAmount: {amount}\nPayment method: {method}\nTransfer screenshot attached.",
+      "waMessageSession": "*New booking: {course}*\n\n📌 *Booking ref:* {ref}\n🗓️ *Appointment:* {slot} (Cairo time)\n\n👤 *Name:* {name}\n📱 *WhatsApp:* {phone}\n🌍 *Country:* {country}\n👶 *Child's age:* {age}\n\n❓ *Biggest challenge with my child:*\n{problem}\n\n💳 *Amount:* {amount}\n🏦 *Payment method:* {method}\n\n📎 Transfer screenshot attached.",
       "problem": "What's the biggest problem or hardest situation with your child?",
       "problemPh": "Tell us briefly, e.g. he screams every time I turn off the phone…",
-      "problemHint": "This helps Shereen prepare and focus on what matters to you.",
+      "problemHint": "This answer is required to complete your booking. It helps Shereen focus on what matters to you.",
       "saving": "One moment…",
       "slotTaken": "That time was just booked. Please pick another time on the calendar.",
       "tooMany": "Too many bookings in a short time. Please try again later or message us on WhatsApp.",
@@ -371,7 +372,8 @@
         "expired": "The discount is valid for 30 days after the workshop only, and this time is after that.",
         "already_used": "The discount applies to the first session only, and you've already used it.",
         "manual": "We'll confirm your workshop discount on WhatsApp before confirming the booking."
-      }
+      },
+      "required": "required"
     },
     "instapay": {
       "label": "InstaPay",
