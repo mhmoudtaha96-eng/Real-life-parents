@@ -619,3 +619,17 @@ a { color: var(--calm); text-underline-offset: .2em; }
 @media (max-width: 560px) {
   .header-actions > .lang-switch { display: none; }
 }
+.field textarea {
+  width: 100%; min-height: 110px; padding: 12px 14px; border-radius: 12px; border: 2px solid var(--line);
+  background: var(--paper); color: var(--ink); font: 500 var(--t-md)/1.6 var(--f-body); resize: vertical;
+}
+.field textarea:focus { outline: none; border-color: var(--calm); box-shadow: 0 0 0 4px color-mix(in srgb, var(--calm) 20%, transparent); }
+.field textarea[aria-invalid="true"] { border-color: var(--crayon); }
+.field textarea.is-valid { border-color: color-mix(in srgb, var(--calm) 60%, var(--line)); }
+.hint { display: flex; justify-content: space-between; gap: 10px; }
+.hint .count { flex: none; font-variant-numeric: tabular-nums; }
+.bank-amount { font-weight: 600; }
+.co-notice { padding: 12px 14px; border-radius: 12px; font-size: var(--t-sm); font-weight: 600; }
+.co-notice.ok { background: color-mix(in srgb, var(--mint) 80%, transparent); color: var(--calm-deep); }
+.co-notice.warn { background: var(--sun-soft); color: var(--ink); }
+.co-notice.err { background: color-mix(in srgb, var(--crayon) 12%, var(--surface)); color: var(--crayon); }

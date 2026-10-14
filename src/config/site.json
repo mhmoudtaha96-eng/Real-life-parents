@@ -3,7 +3,10 @@
   "siteUrl": "https://reallifeparents.com",
   "brand": "Real Life Parents",
   "defaultLang": "ar",
-  "languages": ["ar", "en"],
+  "languages": [
+    "ar",
+    "en"
+  ],
   "featuredCourse": "mesh-kol-yom-khenaqa",
   "currency": "EGP",
   "timezone": "Africa/Cairo",
@@ -12,8 +15,7 @@
     "instagram": "https://www.instagram.com/real_life_parents/"
   },
   "contact": {
-    "_todo": "TODO: replace with the real WhatsApp number in international format, digits only (e.g. 2010xxxxxxxx)",
-    "whatsapp": "201000000000",
+    "whatsapp": "201003964218",
     "email": ""
   },
   "analytics": {
@@ -23,15 +25,24 @@
   },
   "googleSiteVerification": "",
   "payments": {
-    "_note": "Each key is a payment provider. Enable/disable here. New providers live in src/assets/js/payments/providers/.",
+    "_note": "Each key is a payment provider. Enable/disable here. Providers live in src/assets/js/payments/providers/.",
     "instapay": {
       "enabled": true,
-      "_todo": "TODO: replace with the client's real InstaPay payment link and handle",
-      "link": "https://ipn.eg/S/reallifeparents/instapay/0000",
-      "handle": "reallifeparents@instapay",
-      "accountName": "Shereen Gendy",
+      "link": "https://ipn.eg/S/sherinesamy/instapay/5nVF5G",
+      "handle": "sherinesamy@instapay",
+      "accountName": "",
       "qrImage": "",
-      "_qrNote": "Leave qrImage empty to auto-generate the QR from the link at build time, or set e.g. \"/assets/img/instapay-qr.png\" to use the QR downloaded from the InstaPay app."
+      "_qrNote": "Leave qrImage empty to auto-generate the QR from the link at build time, or set e.g. \"/assets/img/instapay-qr.png\" to use the QR from the InstaPay app."
+    },
+    "bank": {
+      "enabled": true,
+      "bankName": "QNB Egypt",
+      "accountName": "",
+      "_todo": "TODO: add the account holder name exactly as on the bank account",
+      "branch": "0007",
+      "accountNumber": "1001144247158",
+      "iban": "EG390037000708181001144247158",
+      "swift": "QNBAEGCXXXX"
     },
     "card": {
       "enabled": false,

@@ -2,10 +2,10 @@
 // UI shell is server-rendered (see src/templates/page.mjs → checkoutDialog); this file adds behaviour.
 import { availableProviders } from './payments/registry.js';
 import './payments/providers/index.js';
-import { createOrder, saveOrder, submitOrder } from './commerce/order.js';
+import { createOrder, saveOrder, submitOrder, claimPayment } from './commerce/order.js';
 import { formatMoney } from './commerce/pricing.js';
 import { el, copyText } from './ui/dom.js';
-import { validateName, validatePhone, validateEmail, toAsciiDigits } from './ui/validate.js';
+import { validateName, validatePhone, validateEmail, validateProblem, toAsciiDigits } from './ui/validate.js';
 import { countryByIso, guessCountry } from './data/countries.js';
 import { track } from './analytics.js';
 
@@ -113,6 +113,28 @@ export function initCheckout(data, cart) {
     }
     return setError(fEmail, 'co-email-err', E.email.invalid);
   }
+  const fProblem = form.problem;
+  const counter = dlg.querySelector('[data-count]');
+  function checkProblem() {
+    const r = validateProblem(fProblem.value);
+    return setError(fProblem, 'co-problem-err', r.ok ? '' : E.problem[r.code]);
+  }
+  fProblem.addEventListener('input', () => {
+    if (counter) counter.textContent = `${fProblem.value.length} / 1000`;
+    if (touched.has(fProblem)) checkProblem();
+  });
+  fProblem.addEventListener('blur', (e) => {
+    if (e.relatedTarget?.type === 'submit' || !fProblem.value.trim()) return;
+    setTimeout(() => { if (!submitting) { touched.add(fProblem); checkProblem(); } }, 250);
+  });
+  function notice(where, kind, text) {
+    const n = dlg.querySelector(`[data-co-notice="${where}"]`);
+    if (!n) return;
+    n.className = `co-notice ${kind || ''}`;
+    n.textContent = text || '';
+    n.hidden = !text;
+  }
+
   function checkAge() {
     const ok = !!form.querySelector('input[name="age"]:checked');
     dlg.querySelector('#co-age-err').hidden = ok;
@@ -165,19 +187,21 @@ export function initCheckout(data, cart) {
     if (touched.has(fPhone)) checkPhone();
   });
 
-  form.addEventListener('submit', (e) => {
+  const submitBtn = form.querySelector('button[type="submit"]');
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
     submitting = true; setTimeout(() => { submitting = false; }, 400);
-    [fName, fPhone, fEmail].forEach((i) => touched.add(i));
-    const ok = [checkName(), checkPhone(), checkAge(), checkEmail()];
+    [fName, fPhone, fEmail, fProblem].forEach((i) => touched.add(i));
+    const ok = [checkName(), checkPhone(), checkAge(), checkProblem(), checkEmail()];
     if (!ok.every(Boolean)) {
       const firstBad = form.querySelector('[aria-invalid="true"]') || form.querySelector('input[name="age"]');
       firstBad?.focus();
       firstBad?.scrollIntoView({ block: 'center', behavior: 'smooth' });
       return;
     }
+    notice('form', '', '');
     const phone = validatePhone(fPhone.value, fCountry.value);
-    order = createOrder(cart, {
+    const customer = {
       name: validateName(fName.value).value,
       phone: phone.e164,
       phoneDisplay: phone.display,
@@ -185,12 +209,60 @@ export function initCheckout(data, cart) {
       countryName: countryName(phone.country),
       childAge: form.querySelector('input[name="age"]:checked').value,
       email: validateEmail(fEmail.value).value,
+      problem: validateProblem(fProblem.value).value,
       lang: data.lang,
-    }, data.currency);
+    };
+    order = createOrder(cart, customer, data.currency);
     if (meta) order.meta = meta;
+
+    // Save the booking on the server (also checks the workshop discount and that the time is still free)
+    submitBtn.disabled = true;
+    submitBtn.dataset.label ||= submitBtn.textContent;
+    submitBtn.textContent = K.saving;
+    const res = await submitOrder({
+      productId: order.lines[0].productId,
+      lang: data.lang,
+      slot: meta?.slot || null,
+      requestDiscount: !!meta?.requestDiscount,
+      customer: { ...customer, phone: phone.e164 },
+    });
+    submitBtn.disabled = false;
+    submitBtn.textContent = submitBtn.dataset.label;
+
+    let payNotice = null;
+    if (res.ok) {
+      const so = res.order;
+      order.ref = so.ref;
+      order.total = so.amount;
+      order.lines[0].unit = order.lines[0].total = so.amount;
+      order.saved = true;
+      order.discount = so.discount;
+      if (so.discount?.requested) {
+        payNotice = so.discount.applied
+          ? ['ok', K.discount.applied]
+          : ['warn', (K.discount[so.discount.reason] || K.discount.not_found)];
+      }
+    } else if (res.error === 'slot_taken' || res.error === 'slot_unavailable') {
+      notice('form', 'err', K.slotTaken);
+      document.dispatchEvent(new CustomEvent('rlp:slots-changed'));
+      return;
+    } else if (res.error === 'too_many') {
+      notice('form', 'err', K.tooMany);
+      return;
+    } else if (res.error === 'invalid') {
+      notice('form', 'err', K.checkFields);
+      return;
+    } else {
+      // Server not reachable / not set up yet: continue, the team confirms on WhatsApp
+      order.saved = false;
+      if (meta?.requestDiscount) payNotice = ['warn', K.discount.manual];
+    }
     saveOrder(order);
     $$('[data-co-ref]').forEach((b) => { b.textContent = order.ref; });
     refreshAmount();
+    if (payNotice) notice('pay', payNotice[0], payNotice[1]); else notice('pay', '', '');
+    // customers abroad start on bank transfer (InstaPay needs an Egyptian account)
+    if (customer.country !== 'EG') method = methods.find((m) => m.provider.id === 'bank') || method;
     renderMethods();
     go(2);
     track('generate_lead', { currency: data.currency, value: order.total });
@@ -219,7 +291,7 @@ export function initCheckout(data, cart) {
     saveOrder(order);
     track('add_payment_info', { currency: data.currency, value: order.total, payment_type: method.provider.id });
     if (method.provider.confirmMode === 'redirect') { await method.provider.startCheckout({ order, config: method.config }); return; }
-    await submitOrder(order);
+    if (order.saved) claimPayment(order.ref, method.provider.id);
     buildWhatsApp();
     go(3);
   });
@@ -235,6 +307,7 @@ export function initCheckout(data, cart) {
       .replace('{phone}', order.customer.phoneDisplay)
       .replace('{country}', order.customer.countryName)
       .replace('{age}', order.customer.childAge)
+      .replace('{problem}', order.customer.problem || '')
       .replace('{amount}', money(order.total))
       .replace('{method}', method.provider.label(S));
     $('[data-wa]').href = `https://wa.me/${data.whatsapp}?text=${encodeURIComponent(msg)}`;

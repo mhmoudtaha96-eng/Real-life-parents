@@ -1,11 +1,26 @@
-// Cloudflare Workers (static assets) config — used when the project is connected from GitHub.
+// Cloudflare Workers config, used when the project deploys from GitHub.
 // Build command: node build.mjs   ·   Deploy command: npx wrangler deploy
 {
   "name": "real-life-parents",
   "compatibility_date": "2026-06-01",
+  // Booking API (saves bookings, checks the workshop discount, admin data)
+  "main": "worker/index.js",
   "assets": {
     "directory": "./dist",
+    "binding": "ASSETS",
     "not_found_handling": "404-page",
-    "html_handling": "auto-trailing-slash"
-  }
+    "html_handling": "auto-trailing-slash",
+    // only /api/* runs the code; every page and image is served directly
+    "run_worker_first": ["/api/*"]
+  },
+  // Database that stores every booking. Create it once in the Cloudflare dashboard
+  // (Storage & Databases → D1 → Create → name: rlp-bookings) and paste its ID below.
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "rlp-bookings",
+      "database_id": "64054a8f-0488-46d8-baed-3d305728c570"
+    }
+  ],
+  "observability": { "enabled": true }
 }

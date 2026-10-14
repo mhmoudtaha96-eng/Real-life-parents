@@ -82,3 +82,11 @@ export function validateEmail(v) {
   if (DOMAIN_FIX[domain]) return { ok: false, code: 'typo', suggestion: `${user}@${DOMAIN_FIX[domain]}` };
   return { ok: true, value: `${user}@${domain}` };
 }
+
+/* ---------- biggest challenge (free text) ---------- */
+export function validateProblem(v) {
+  const text = String(v).replace(/\s+\n/g, '\n').trim();
+  if (!text) return { ok: false, code: 'empty' };
+  if (text.replace(/\s/g, '').length < 10) return { ok: false, code: 'short' };
+  return { ok: true, value: text.slice(0, 1000) };
+}

@@ -97,7 +97,7 @@
       "copy": "نسخ",
       "copied": "اتنسخ",
       "close": "إغلاق",
-      "waMessage": "أهلًا، حجزت مكان في ورشة «{course}».\nرقم الحجز: {ref}\nالاسم: {name}\nالواتساب: {phone} ({country})\nسن الطفل: {age}\nالمبلغ: {amount}\nطريقة الدفع: {method}\nمرفق صورة التحويل.",
+      "waMessage": "أهلًا، حجزت مكان في ورشة «{course}».\nرقم الحجز: {ref}\nالاسم: {name}\nالواتساب: {phone} ({country})\nسن الطفل: {age}\nالمشكلة: {problem}\nالمبلغ: {amount}\nطريقة الدفع: {method}\nمرفق صورة التحويل.",
       "country": "الدولة",
       "phoneHint": "هنبعتلك لينك Zoom والتسجيلات على الرقم ده.",
       "err": {
@@ -117,13 +117,32 @@
         "email": {
           "invalid": "الإيميل ده مش صحيح. مثال: name@gmail.com",
           "typo": "قصدك {email}؟"
+        },
+        "problem": {
+          "empty": "اكتبي باختصار أكبر مشكلة بتواجهك مع طفلك.",
+          "short": "اكتبي تفاصيل أكتر شوية (١٠ حروف على الأقل)."
         }
       },
       "useSuggestion": "أيوه، صحّحه",
-      "outsideEgypt": "InstaPay بيشتغل بحسابات البنوك والمحافظ المصرية بس. لو مش معاكي حساب في مصر، كلمينا على واتساب ونبعتلك طريقة دفع تانية.",
+      "outsideEgypt": "InstaPay بيشتغل بحسابات البنوك والمحافظ المصرية بس. لو إنتِ برا مصر، اختاري «تحويل بنكي» وحوّلي بالـIBAN، أو كلمينا على واتساب.",
       "askOtherPayment": "اسألي عن طريقة دفع تانية",
       "otherPaymentMsg": "أهلًا، عايزة أحجز في ورشة «{course}» ومش معايا InstaPay. رقم الحجز: {ref}. إيه طرق الدفع المتاحة من {country}؟",
-      "waMessageSession": "أهلًا، حجزت {course}.\nالموعد: {slot} (بتوقيت مصر)\nرقم الحجز: {ref}\nالاسم: {name}\nالواتساب: {phone} ({country})\nسن الطفل: {age}\nالمبلغ: {amount}\nطريقة الدفع: {method}\nمرفق صورة التحويل."
+      "waMessageSession": "أهلًا، حجزت {course}.\nالموعد: {slot} (بتوقيت مصر)\nرقم الحجز: {ref}\nالاسم: {name}\nالواتساب: {phone} ({country})\nسن الطفل: {age}\nالمشكلة: {problem}\nالمبلغ: {amount}\nطريقة الدفع: {method}\nمرفق صورة التحويل.",
+      "problem": "إيه أكبر مشكلة أو موقف بيبقى صعب مع طفلك؟",
+      "problemPh": "احكيلنا باختصار، مثلًا: بيصرخ كل ما أقفل الموبايل…",
+      "problemHint": "ده بيساعد شيرين تجهّز للقاء وتركّز على اللي يهمك.",
+      "saving": "لحظة…",
+      "slotTaken": "الميعاد ده اتحجز لسه. اختاري ميعاد تاني من التقويم.",
+      "tooMany": "عملتي حجوزات كتير في وقت قصير. حاولي تاني بعد شوية أو كلمينا على واتساب.",
+      "checkFields": "راجعي البيانات وحاولي تاني.",
+      "discount": {
+        "applied": "تم تطبيق خصم حضور الورشة ٣٠٪ على أول جلسة.",
+        "not_found": "مش لاقيين حجز مدفوع للورشة برقم الواتساب ده، فالسعر من غير خصم. لو حجزتي برقم تاني كلمينا على واتساب.",
+        "before_workshop": "خصم الورشة بيبدأ بعد الورشة، فاختاري ميعاد بعد ١١ نوفمبر عشان يتطبق.",
+        "expired": "الخصم صالح لمدة ٣٠ يوم بعد الورشة بس، والميعاد ده بعد المدة دي.",
+        "already_used": "الخصم بيتطبق على أول جلسة بس، واستخدمتيه قبل كده.",
+        "manual": "هنتأكد من خصم الورشة على واتساب قبل تأكيد الحجز."
+      }
     },
     "instapay": {
       "label": "InstaPay",
@@ -169,8 +188,8 @@
       "durationValue": "{n} دقيقة",
       "platform": "المكان",
       "price": "السعر",
-      "attended": "حضرت ورشة «مش كل يوم خناقة!» (خصم {p}٪)",
-      "attendedNote": "الخصم بيتأكد من فريقنا على واتساب.",
+      "attended": "حضرت ورشة «مش كل يوم خناقة!» (خصم {p}٪ على أول جلسة)",
+      "attendedNote": "بنتأكد من حجزك للورشة برقم الواتساب. صالح ٣٠ يوم بعد الورشة.",
       "reserve": "احجزي الميعاد ده",
       "chooseFirst": "اختاري يوم وميعاد الأول",
       "selected": "الميعاد اللي اخترتيه",
@@ -193,7 +212,20 @@
         }
       ],
       "sampleNote": "المواعيد الظاهرة دلوقتي مواعيد تجريبية.",
-      "allCairo": "كل المواعيد بتوقيت مصر (القاهرة)."
+      "allCairo": "كل المواعيد بتوقيت مصر (القاهرة).",
+      "priceIfEligible": "بعد الخصم لو مستحقة"
+    },
+    "bank": {
+      "label": "تحويل بنكي",
+      "hint": "من أي بنك، في مصر أو من برا مصر",
+      "transfer": "حوّلي مبلغ",
+      "bankName": "البنك",
+      "accountName": "اسم صاحب الحساب",
+      "accountNumber": "رقم الحساب",
+      "iban": "IBAN",
+      "swift": "Swift Code",
+      "branch": "الفرع",
+      "note": "لو بتحوّلي من برا مصر استخدمي الـIBAN والـSwift Code. اكتبي رقم الحجز في بيان التحويل لو أمكن."
     }
   },
   "en": {
@@ -294,7 +326,7 @@
       "copy": "Copy",
       "copied": "Copied",
       "close": "Close",
-      "waMessage": "Hi, I've booked a seat in “{course}”.\nBooking ref: {ref}\nName: {name}\nWhatsApp: {phone} ({country})\nChild's age: {age}\nAmount: {amount}\nPayment method: {method}\nTransfer screenshot attached.",
+      "waMessage": "Hi, I've booked a seat in “{course}”.\nBooking ref: {ref}\nName: {name}\nWhatsApp: {phone} ({country})\nChild's age: {age}\nMain challenge: {problem}\nAmount: {amount}\nPayment method: {method}\nTransfer screenshot attached.",
       "country": "Country",
       "phoneHint": "We'll send your Zoom link and recordings to this number.",
       "err": {
@@ -314,13 +346,32 @@
         "email": {
           "invalid": "That email address isn't valid. Example: name@gmail.com",
           "typo": "Did you mean {email}?"
+        },
+        "problem": {
+          "empty": "Briefly describe the biggest challenge you face with your child.",
+          "short": "Please add a bit more detail (at least 10 characters)."
         }
       },
       "useSuggestion": "Yes, fix it",
-      "outsideEgypt": "InstaPay only works with Egyptian bank accounts and wallets. If you don't have one, message us on WhatsApp and we'll send you another way to pay.",
+      "outsideEgypt": "InstaPay only works with Egyptian bank accounts and wallets. If you're outside Egypt, choose “Bank transfer” and pay with the IBAN, or message us on WhatsApp.",
       "askOtherPayment": "Ask about another payment method",
       "otherPaymentMsg": "Hi, I'd like to book “{course}” but I don't have InstaPay. Booking ref: {ref}. Which payment methods are available from {country}?",
-      "waMessageSession": "Hi, I've booked a {course}.\nAppointment: {slot} (Cairo time)\nBooking ref: {ref}\nName: {name}\nWhatsApp: {phone} ({country})\nChild's age: {age}\nAmount: {amount}\nPayment method: {method}\nTransfer screenshot attached."
+      "waMessageSession": "Hi, I've booked a {course}.\nAppointment: {slot} (Cairo time)\nBooking ref: {ref}\nName: {name}\nWhatsApp: {phone} ({country})\nChild's age: {age}\nMain challenge: {problem}\nAmount: {amount}\nPayment method: {method}\nTransfer screenshot attached.",
+      "problem": "What's the biggest problem or hardest situation with your child?",
+      "problemPh": "Tell us briefly, e.g. he screams every time I turn off the phone…",
+      "problemHint": "This helps Shereen prepare and focus on what matters to you.",
+      "saving": "One moment…",
+      "slotTaken": "That time was just booked. Please pick another time on the calendar.",
+      "tooMany": "Too many bookings in a short time. Please try again later or message us on WhatsApp.",
+      "checkFields": "Please check your details and try again.",
+      "discount": {
+        "applied": "Workshop discount applied: 30% off your first session.",
+        "not_found": "We couldn't find a paid workshop booking for this WhatsApp number, so the full price applies. If you booked with another number, message us on WhatsApp.",
+        "before_workshop": "The workshop discount starts after the workshop. Pick a time after 11 November to use it.",
+        "expired": "The discount is valid for 30 days after the workshop only, and this time is after that.",
+        "already_used": "The discount applies to the first session only, and you've already used it.",
+        "manual": "We'll confirm your workshop discount on WhatsApp before confirming the booking."
+      }
     },
     "instapay": {
       "label": "InstaPay",
@@ -366,8 +417,8 @@
       "durationValue": "{n} minutes",
       "platform": "Where",
       "price": "Price",
-      "attended": "I attended “Not Every Day a Battle!” ({p}% off)",
-      "attendedNote": "Our team confirms the discount on WhatsApp.",
+      "attended": "I attended “Not Every Day a Battle!” ({p}% off your first session)",
+      "attendedNote": "We check your workshop booking by WhatsApp number. Valid for 30 days after the workshop.",
       "reserve": "Book this time",
       "chooseFirst": "Pick a day and time first",
       "selected": "Your chosen time",
@@ -390,7 +441,20 @@
         }
       ],
       "sampleNote": "The times shown are sample times for now.",
-      "allCairo": "All times are Cairo time."
+      "allCairo": "All times are Cairo time.",
+      "priceIfEligible": "after discount, if eligible"
+    },
+    "bank": {
+      "label": "Bank transfer",
+      "hint": "From any bank, in Egypt or abroad",
+      "transfer": "Transfer",
+      "bankName": "Bank",
+      "accountName": "Account holder",
+      "accountNumber": "Account number",
+      "iban": "IBAN",
+      "swift": "Swift code",
+      "branch": "Branch",
+      "note": "Transferring from outside Egypt? Use the IBAN and Swift code. Add your booking ref to the transfer reference if you can."
     }
   }
 }

@@ -35,10 +35,31 @@ export function saveOrder(order) {
 }
 
 /**
- * Hook for a future backend. Today InstaPay is confirmed manually over WhatsApp,
- * so this resolves immediately. Replace with:
- *   return fetch('/api/orders', { method: 'POST', headers: {'content-type': 'application/json'}, body: JSON.stringify(order) }).then(r => r.json());
+ * Saves the booking on the server (worker/index.js → D1 database).
+ * Returns { ok: true, order } or { ok: false, error }. error = 'offline' when the API isn't reachable
+ * (e.g. the database isn't set up yet); the booking then continues on WhatsApp only.
  */
-export async function submitOrder(order) {
-  return { ok: true, order };
+export async function submitOrder(payload) {
+  try {
+    const res = await fetch('/api/orders', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    const body = await res.json().catch(() => ({}));
+    if (res.ok && body.ok) return { ok: true, order: body.order };
+    if ([400, 409, 429].includes(res.status)) return { ok: false, error: body.error || 'invalid', detail: body };
+    return { ok: false, error: 'offline' };
+  } catch {
+    return { ok: false, error: 'offline' };
+  }
+}
+
+/** Remembers which payment method she used (the team still confirms the transfer). */
+export function claimPayment(ref, method) {
+  try {
+    fetch(`/api/orders/${encodeURIComponent(ref)}/payment`, {
+      method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ method }), keepalive: true,
+    }).catch(() => {});
+  } catch { /* ignore */ }
 }

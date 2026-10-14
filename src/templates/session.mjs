@@ -15,8 +15,7 @@ export function sessionPage(ctx) {
   const discounted = Math.round(price.amount * (1 - price.workshopDiscountPercent / 100));
 
   const products = [
-    { id: session.id, type: 'session', name: S.productName, pricing: { currency: price.currency, tiers: [{ id: 'regular', amount: price.amount, until: null }] } },
-    { id: `${session.id}-workshop`, type: 'session', name: S.productNameDiscount, pricing: { currency: price.currency, tiers: [{ id: 'regular', amount: discounted, until: null }] } },
+    { id: session.id, type: 'session', name: S.productName, pricing: { currency: price.currency, tiers: [{ id: 'regular', amount: price.amount, until: null }] }, discountPercent: price.workshopDiscountPercent },
   ];
   const { _note, content, ...availability } = session;
 
@@ -74,7 +73,7 @@ ${header(ctx)}
         <div><dt>${icons.calendar}${S.selected}</dt><dd data-sum-slot>${esc(S.chooseFirst)}</dd></div>
         <div><dt>${icons.hourglass}${S.duration}</dt><dd>${S.durationValue.replace('{n}', fmt.num(session.durationMinutes, lang))}</dd></div>
         <div><dt>${icons.screen}${S.platform}</dt><dd>${t.liveOn} ${esc(session.platform)}</dd></div>
-        <div><dt>${icons.card}${S.price}</dt><dd class="ses-price"><span data-sum-price>${fmt.num(price.amount, lang)}</span> <small>${t.currency}</small> <s data-sum-was hidden>${fmt.num(price.amount, lang)} ${t.currency}</s></dd></div>
+        <div><dt>${icons.card}${S.price}</dt><dd class="ses-price"><span data-sum-price>${fmt.num(price.amount, lang)}</span> <small>${t.currency}</small> <s data-sum-was hidden>${fmt.num(price.amount, lang)} ${t.currency}</s> <small class="ses-if" data-sum-if hidden>${esc(S.priceIfEligible)}</small></dd></div>
       </dl>
       <label class="ses-discount" for="ses-attended">
         <input type="checkbox" id="ses-attended" data-sum-discount>

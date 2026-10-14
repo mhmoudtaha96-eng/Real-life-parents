@@ -51,9 +51,9 @@ export function initCalendar(data, checkout) {
   const S = data.strings.session;
   const loc = data.locale;
   const nf = new Intl.NumberFormat(loc, { useGrouping: false });
-  const slots = buildSlots(A);
-  const dates = Object.keys(slots).sort();
-  const openDates = dates.filter((d) => slots[d].some((s) => s.status === 'open'));
+  let slots = buildSlots(A);
+  let dates = Object.keys(slots).sort();
+  let openDates = dates.filter((d) => slots[d].some((s) => s.status === 'open'));
 
   const $ = (sel) => document.querySelector(sel);
   const grid = $('[data-cal-grid]');
@@ -128,13 +128,16 @@ export function initCalendar(data, checkout) {
     }
   }
 
-  const productId = () => (discount?.checked ? `${A.id}-workshop` : A.id);
-  const price = () => data.products.find((p) => p.id === productId()).pricing.tiers[0].amount;
+  const product = data.products.find((p) => p.id === A.id);
+  const productId = () => A.id;
+  const fullPrice = product.pricing.tiers[0].amount;
+  const price = () => (discount?.checked ? Math.round(fullPrice * (1 - (product.discountPercent || 0) / 100)) : fullPrice);
   const slotLabel = () => `${fmtDay(selDate, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}، ${fmtTime(selSlot.at, TZ)}`.replace('،', data.lang === 'ar' ? '،' : ',');
 
   function renderSummary() {
     sumPrice.textContent = nf.format(price());
     sumWas.hidden = !discount?.checked;
+    const ifEl = document.querySelector('[data-sum-if]'); if (ifEl) ifEl.hidden = !discount?.checked;
     reserveBtn.disabled = !selSlot;
     sumSlot.textContent = selSlot ? slotLabel() : S.chooseFirst;
     sumSlot.classList.toggle('is-set', !!selSlot);
@@ -162,10 +165,28 @@ export function initCalendar(data, checkout) {
 
   reserveBtn.addEventListener('click', () => {
     if (!selSlot) return;
-    checkout.open(productId(), { label: slotLabel(), slot: `${selDate}T${selSlot.time}`, at: selSlot.at.toISOString(), workshopDiscount: !!discount?.checked });
+    checkout.open(productId(), { label: slotLabel(), slot: `${selDate}T${selSlot.time}`, at: selSlot.at.toISOString(), requestDiscount: !!discount?.checked });
   });
+
+  // Times already booked by others (saved in the database) → shown as "booked"
+  async function loadTaken() {
+    try {
+      const res = await fetch('/api/slots', { cache: 'no-store' });
+      if (!res.ok) return;
+      const { taken = [] } = await res.json();
+      const extra = taken.map((t) => ({ date: t.slice(0, 10), time: t.slice(11, 16) }));
+      slots = buildSlots({ ...A, booked: [...(A.booked || []), ...extra] });
+      dates = Object.keys(slots).sort();
+      openDates = dates.filter((d) => slots[d].some((s) => s.status === 'open'));
+      if (selDate && !(slots[selDate] || []).some((s) => s.status === 'open')) selDate = openDates[0] || null;
+      if (selSlot) selSlot = (slots[selDate] || []).find((s) => s.time === selSlot.time && s.status === 'open') || null;
+      renderMonth(); renderTimes(); renderSummary();
+    } catch { /* API not available: keep the published availability */ }
+  }
+  document.addEventListener('rlp:slots-changed', loadTaken);
 
   // Start on the first available day
   selDate = openDates[0] || null;
   renderMonth(); renderTimes(); renderSummary();
+  loadTaken();
 }

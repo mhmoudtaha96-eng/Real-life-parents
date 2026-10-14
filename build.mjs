@@ -14,6 +14,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { coursePage } from './src/templates/page.mjs';
 import { sessionPage } from './src/templates/session.mjs';
+import { adminPage } from './src/templates/admin.mjs';
 import { activeTier } from './src/templates/helpers.mjs';
 import { qrSvg } from './scripts/qr.mjs';
 
@@ -139,6 +140,18 @@ for (const session of sessions) {
   }
 }
 
+// ---------- admin dashboard (data loads from /api/admin with the password) ----------
+write(path.join(OUT, 'admin/index.html'), adminPage({ site }));
+
+// ---------- catalog for the booking API (worker/) ----------
+// Prices, schedules and availability come from the same content files as the pages,
+// so the server always charges what the page shows.
+write(path.join(ROOT, 'worker/catalog.generated.json'), JSON.stringify({
+  currency: site.currency,
+  courses: courses.map((c) => ({ id: c.id, slug: c.slug, name: { ar: c.content.ar.name, en: c.content.en.name }, pricing: c.pricing, schedule: c.schedule })),
+  sessions: sessions.map(({ _note, content, ...s }) => ({ ...s, name: { ar: i18n.ar.session.productName, en: i18n.en.session.productName } })),
+}, null, 2));
+
 // ---------- SEO files ----------
 const today = now.toISOString().slice(0, 10);
 write(path.join(OUT, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>
@@ -156,6 +169,8 @@ ${Object.entries(u.alternates).map(([l, h]) => `    <xhtml:link rel="alternate" 
 
 write(path.join(OUT, 'robots.txt'), `User-agent: *
 Allow: /
+Disallow: /admin/
+Disallow: /api/
 
 Sitemap: ${site.siteUrl}/sitemap.xml
 `);
@@ -185,6 +200,10 @@ write(path.join(OUT, '_headers'), `/*
 
 /*.html
   Cache-Control: public, max-age=0, must-revalidate
+
+/admin/*
+  X-Robots-Tag: noindex, nofollow
+  Cache-Control: no-store
 `);
 write(path.join(OUT, '_redirects'), [
   `/courses/${site.featuredCourse}/  /  301`,

@@ -1,8 +1,8 @@
 {
-  "_note": "SAMPLE availability for the 1-to-1 booking page. Replace with Shereen's real schedule. Times are Cairo time (24h).",
+  "_note": "1-to-1 availability. Times are Cairo time (24h start times of 60-minute sessions). Bookings saved in the database block their slot automatically.",
   "id": "session-1to1",
   "slug": "book-session",
-  "sample": true,
+  "sample": false,
   "instructor": "shereen-gendy",
   "durationMinutes": 60,
   "platform": "Zoom",
@@ -10,7 +10,13 @@
     "_todo": "TODO: confirm the real price and duration of a private session",
     "amount": 1000,
     "currency": "EGP",
-    "workshopDiscountPercent": 30
+    "workshopDiscountPercent": 30,
+    "discountRules": {
+      "_help": "Discount for workshop attendees: on the first session only, for sessions within N days after the workshop ends.",
+      "validDaysAfterWorkshop": 30,
+      "firstSessionOnly": true,
+      "workshopCourse": "mesh-kol-yom-khenaqa"
+    }
   },
   "booking": {
     "daysAhead": 45,
@@ -18,68 +24,33 @@
   },
   "weekly": {
     "_help": "Repeating weekly slots. Keys: sat sun mon tue wed thu fri.",
-    "sat": [
-      "11:00",
-      "13:00"
-    ],
-    "sun": [
-      "19:00",
-      "20:30"
+    "mon": [
+      "17:00",
+      "18:00",
+      "19:00"
     ],
     "tue": [
-      "11:00",
-      "13:00",
+      "17:00",
+      "18:00",
+      "19:00"
+    ],
+    "wed": [
+      "17:00",
+      "18:00",
       "19:00"
     ],
     "thu": [
-      "19:00",
-      "20:30"
+      "17:00",
+      "18:00",
+      "19:00"
     ]
   },
-  "extraSlots": [
-    {
-      "date": "2026-10-24",
-      "times": [
-        "17:00"
-      ]
-    },
-    {
-      "date": "2026-11-05",
-      "times": [
-        "12:00"
-      ]
-    }
-  ],
+  "extraSlots": [],
   "blockedDates": [
     "2026-11-09",
     "2026-11-11"
   ],
-  "booked": [
-    {
-      "date": "2026-10-17",
-      "time": "11:00"
-    },
-    {
-      "date": "2026-10-18",
-      "time": "19:00"
-    },
-    {
-      "date": "2026-10-20",
-      "time": "13:00"
-    },
-    {
-      "date": "2026-10-22",
-      "time": "20:30"
-    },
-    {
-      "date": "2026-10-27",
-      "time": "11:00"
-    },
-    {
-      "date": "2026-10-27",
-      "time": "19:00"
-    }
-  ],
+  "booked": [],
   "content": {
     "ar": {
       "seo": {
@@ -92,7 +63,7 @@
       "points": [
         "جلسة ٦٠ دقيقة أونلاين على Zoom",
         "نناقش تحدياتك الخاصة مع طفلك ونشتغل على خطوات عملية",
-        "خصم ٣٠٪ لو حضرتي ورشة «مش كل يوم خناقة!» (صالح لمدة شهر بعد الورشة)"
+        "خصم ٣٠٪ على أول جلسة لو حضرتي ورشة «مش كل يوم خناقة!»، صالح لمدة ٣٠ يوم بعد الورشة"
       ]
     },
     "en": {
@@ -106,8 +77,9 @@
       "points": [
         "60-minute session online on Zoom",
         "We discuss your own challenges with your child and work on practical steps",
-        "30% off if you attended “Not Every Day a Battle!” (valid for one month after the workshop)"
+        "30% off your first session if you attended “Not Every Day a Battle!”, valid for 30 days after the workshop"
       ]
     }
-  }
+  },
+  "_blockedNote": "Workshop days (sessions would end right as the workshop starts). Remove if Shereen wants sessions on those days."
 }

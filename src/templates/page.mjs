@@ -124,7 +124,7 @@ function pageData(ctx) {
     locale: t.locale,
     currency: site.currency,
     whatsapp: site.contact.whatsapp,
-    strings: { session: t.session, checkout: t.checkout, instapay: t.instapay, card: t.card, currency: t.currency, days: t.days, hours: t.hours, minutes: t.minutes, earlyEnded: t.earlyEnded, insteadOf: t.insteadOf },
+    strings: { session: t.session, checkout: t.checkout, instapay: t.instapay, bank: t.bank, card: t.card, currency: t.currency, days: t.days, hours: t.hours, minutes: t.minutes, earlyEnded: t.earlyEnded, insteadOf: t.insteadOf },
     products: ctx.products || [{
       id: course.id,
       slug: course.slug,
@@ -517,6 +517,7 @@ export function checkoutDialog(ctx) {
     </ol>
 
     <form class="co-step" data-step="1" id="co-form" novalidate>
+      <p class="co-notice" data-co-notice="form" role="alert" hidden></p>
       <div class="field">
         <label for="co-name">${k.name}</label>
         <input id="co-name" name="name" type="text" autocomplete="name" maxlength="60" placeholder="${esc(k.namePh)}" required aria-describedby="co-name-err">
@@ -542,6 +543,12 @@ export function checkoutDialog(ctx) {
         <p class="err" id="co-age-err" hidden>${k.errAge}</p>
       </fieldset>
       <div class="field">
+        <label for="co-problem">${k.problem}</label>
+        <textarea id="co-problem" name="problem" rows="4" maxlength="1000" placeholder="${esc(k.problemPh)}" required aria-describedby="co-problem-hint co-problem-err"></textarea>
+        <p class="hint" id="co-problem-hint"><span>${k.problemHint}</span> <span class="count" data-count dir="ltr">0 / 1000</span></p>
+        <p class="err" id="co-problem-err" aria-live="polite" hidden></p>
+      </div>
+      <div class="field">
         <label for="co-email">${k.email}</label>
         <input id="co-email" name="email" type="email" inputmode="email" autocomplete="email" maxlength="254" dir="ltr" placeholder="name@gmail.com" aria-describedby="co-email-err">
         <p class="err" id="co-email-err" aria-live="polite" hidden></p>
@@ -558,6 +565,7 @@ export function checkoutDialog(ctx) {
         <span>${k.orderRef}: <b data-co-ref dir="ltr"></b></span>
         <b data-co-amount></b>
       </div>
+      <p class="co-notice" data-co-notice="pay" role="status" hidden></p>
       <p class="co-label">${k.payWith}</p>
       <div class="co-methods" data-co-methods role="radiogroup" aria-label="${k.payWith}"></div>
       <div class="co-method-panel" data-co-panel></div>
