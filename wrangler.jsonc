@@ -10,7 +10,8 @@
     "binding": "ASSETS",
     "not_found_handling": "404-page",
     "html_handling": "auto-trailing-slash",
-    // only /api/* runs the code; every page and image is served directly
+    // the code runs for the API and the pages (so courses edited in /admin/ show immediately);
+    // images, CSS and JS are served directly
     "run_worker_first": ["/api/*", "/", "/en", "/en/", "/courses/*", "/en/courses/*", "/book-session", "/book-session/", "/en/book-session", "/en/book-session/", "/sitemap.xml"]
   },
   // Database that stores every booking. Create it once in the Cloudflare dashboard
