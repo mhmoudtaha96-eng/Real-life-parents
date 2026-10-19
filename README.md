@@ -15,7 +15,7 @@ A bilingual (Arabic / English) landing site for **Real Life Parents** parenting 
 | InstaPay payment link, handle, account name | `src/config/site.json` → `payments.instapay` |
 | InstaPay QR from the app (optional) | put the image in `src/assets/img/`, set `payments.instapay.qrImage` (if empty, a QR is generated from the link) |
 | Early-bird end date, prices, dates | Admin page → **Courses** → Edit |
-| Shereen's photo | `src/assets/img/shereen.webp` + `src/content/instructors/shereen-gendy.json` → `photo` |
+| Shereen's photo, videos, album | Admin page → **Photos & videos** |
 | GA4 / Meta Pixel / Search Console | `src/config/site.json` → `analytics`, `googleSiteVerification` |
 
 Then run `npm run images` to regenerate the share images (needs Playwright).
@@ -63,6 +63,10 @@ Courses and 1-to-1 settings are edited in the admin page: `/admin/` → **Course
 - The pages are rendered by `worker/index.js` from the database (`courses` and `settings` tables) using the same templates as the build, so Google gets full HTML.
 - `src/content/courses/*.json` and `src/content/sessions/one-to-one.json` are only the **starting content**: they are copied into the database the first time it is empty. After that, edit in the admin page, not in the files.
 - New courses use the generic social-sharing image (`og-ar.png` / `og-en.png`).
+
+## Photos & videos (no code needed)
+
+`/admin/` → **Photos & videos**: change or remove Shereen's profile photo, add / remove / reorder videos (Instagram, YouTube, TikTok or Facebook links) and album photos with captions. Photos are resized in the browser and stored in the database (`media` table), served from `/api/media/<id>.webp`. Like courses, changes go live with **Apply to website**. Photos no longer used are deleted automatically a day after they were removed.
 
 ## Moving to full e-commerce later
 

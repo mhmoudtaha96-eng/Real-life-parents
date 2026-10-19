@@ -12,6 +12,37 @@
 import { coursePage, layout, header, footer } from '../templates/page.mjs';
 import { sessionPage } from '../templates/session.mjs';
 import { activeTier, esc } from '../templates/helpers.mjs';
+import { parseVideo } from '../assets/js/media/video.js';
+
+/** Coach photo, videos and album as edited in /admin/ (starting values come from the instructor JSON) */
+export function coachFromInstructor(ins) {
+  const m = ins.media || {};
+  const v = m.video || {};
+  return {
+    photo: ins.photo ? { src: ins.photo, small: ins.photo.replace('.webp', '-320.webp') } : null,
+    videos: v.instagram ? [{ url: `https://www.instagram.com/reel/${v.instagram}/`, caption: {} }] : [],
+    album: (m.album || []).map((a) => ({ src: a.src, thumb: a.thumb, w: a.w, h: a.h, tw: a.tw, th: a.th, caption: a.caption || {}, alt: a.alt || {} })),
+  };
+}
+/** The instructor object the templates read, with the admin's photo / videos / album applied */
+export function applyCoach(ins, coach) {
+  if (!coach) return { ...ins, photoSmall: ins.photo ? ins.photo.replace('.webp', '-320.webp') : '', media: { ...(ins.media || {}), videos: ins.media?.video?.instagram ? [parseVideo(`https://www.instagram.com/reel/${ins.media.video.instagram}/`)] : [] } };
+  const pick = (o, lang) => (o && (o[lang] || o.ar || o.en)) || '';
+  return {
+    ...ins,
+    photo: coach.photo?.src || '',
+    photoSmall: coach.photo?.small || coach.photo?.src || '',
+    media: {
+      videos: (coach.videos || []).map((v) => { const p = parseVideo(v.url); return p ? { ...p, caption: v.caption || {} } : null; }).filter(Boolean),
+      album: (coach.album || []).filter((a) => a && a.src).map((a) => ({
+        ...a, thumb: a.thumb || a.src, tw: a.tw || a.w, th: a.th || a.h,
+        shape: a.h > a.w * 1.1 ? 'tall' : 'land',
+        caption: { ar: pick(a.caption, 'ar'), en: pick(a.caption, 'en') },
+        alt: { ar: pick(a.alt, 'ar') || pick(a.caption, 'ar') || ins.content.ar.name, en: pick(a.alt, 'en') || pick(a.caption, 'en') || ins.content.en.name },
+      })),
+    },
+  };
+}
 
 export function createRenderer({ site, i18n, instructors, qrPath = '', assetVersion = '', linkIndex = false }) {
   const langPrefix = (lang) => (lang === site.defaultLang ? '' : `${lang}/`);
@@ -58,7 +89,7 @@ export function createRenderer({ site, i18n, instructors, qrPath = '', assetVers
     const t = i18n[lang];
     const { list, featured } = visibleCourses(content);
     const anyCourse = featured || (content.courses || [])[0];
-    const instructor = instructors[(anyCourse && anyCourse.instructor) || Object.keys(instructors)[0]];
+    const instructor = applyCoach(instructors[(anyCourse && anyCourse.instructor) || Object.keys(instructors)[0]], content.coach);
     const rel = '../'.repeat(depth(route));
     const common = {
       site, t, lang, instructor, ins: instructor.content[lang], rel,

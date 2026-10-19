@@ -12,7 +12,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { createRenderer } from './src/render/site.mjs';
+import { createRenderer, coachFromInstructor } from './src/render/site.mjs';
 import { adminPage } from './src/templates/admin.mjs';
 import { qrSvg } from './scripts/qr.mjs';
 
@@ -65,7 +65,8 @@ for (const f of assetFiles.filter((f) => f.endsWith('.js'))) {
 // 1-to-1 settings are edited in /admin/ and the live pages are rendered by worker/index.js.
 const seedCourses = courses.map((c, i) => ({ ...c, visible: c.status !== 'hidden', featured: c.slug === site.featuredCourse, sort: i }));
 const seedSession = sessions[0] || null;
-const content = { courses: seedCourses, session: seedSession };
+const seedCoach = coachFromInstructor(Object.values(instructors)[0]);
+const content = { courses: seedCourses, session: seedSession, coach: seedCoach };
 const now = new Date();
 const renderer = createRenderer({ site, i18n, instructors, qrPath, assetVersion: stamp, linkIndex: PREVIEW });
 const pages = renderer.routes(content);
@@ -83,7 +84,7 @@ write(path.join(OUT, 'admin/index.html'), adminPage({ site }));
 // Starting content for the database, plus everything the server needs to render pages.
 write(path.join(ROOT, 'worker/content.generated.json'), JSON.stringify({
   site, i18n, instructors, qrPath, assetVersion: stamp,
-  seed: { courses: seedCourses, session: seedSession },
+  seed: { courses: seedCourses, session: seedSession, coach: seedCoach },
 }));
 
 // ---------- SEO files ----------
@@ -93,6 +94,7 @@ write(path.join(OUT, 'robots.txt'), `User-agent: *
 Allow: /
 Disallow: /admin/
 Disallow: /api/
+Allow: /api/media/
 
 Sitemap: ${site.siteUrl}/sitemap.xml
 `);

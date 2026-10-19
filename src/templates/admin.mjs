@@ -82,6 +82,27 @@ a{color:var(--calm)}
 .publish.live .btn{display:none}
 .pill.chg{background:var(--sun-soft);color:#7A5A00}
 
+/* photos & videos */
+.pp{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.pp img,.pp .pp-empty{width:120px;height:120px;border-radius:50%;object-fit:cover;background:var(--mint);display:grid;place-items:center;color:var(--soft);font-weight:700;box-shadow:0 0 0 6px var(--sun-soft)}
+.pp-actions{display:flex;gap:8px;flex-wrap:wrap}
+.vlist,.alist{display:grid;gap:12px}
+.vrow{display:grid;grid-template-columns:150px 1fr;gap:14px;border:1px dashed var(--line);border-radius:12px;padding:12px;background:#FCFDFB}
+.vprev{width:150px;aspect-ratio:9/16;border-radius:12px;overflow:hidden;background:var(--ink);display:grid;place-items:center;color:#fff;font-size:12px;text-align:center;padding:0}
+.vprev.wide{aspect-ratio:16/9}
+.vprev iframe{width:100%;height:100%;border:0;background:#fff}
+.vfields{display:grid;gap:8px;align-content:start}
+.alist{grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}
+.aitem{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#fff;display:grid}
+.aitem img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block;background:var(--mint)}
+.aitem .afields{padding:10px;display:grid;gap:6px}
+.aitem .item-head{padding:8px 10px 0}
+.aitem:first-child{outline:3px solid var(--sun-soft)}
+.uploading{opacity:.6;pointer-events:none}
+.drop{border:2px dashed var(--line);border-radius:12px;padding:18px;text-align:center;color:var(--soft);margin-top:12px}
+.drop.over{border-color:var(--calm);background:var(--mint)}
+@media(max-width:600px){.vrow{grid-template-columns:1fr}.vprev{width:140px}}
+
 /* courses list */
 .clist{display:grid;gap:12px;margin-bottom:40px}
 .ccard{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px 16px;display:grid;grid-template-columns:auto 1fr auto;gap:12px 16px;align-items:start}
@@ -143,6 +164,7 @@ a{color:var(--calm)}
       <button type="button" data-view="bookings" aria-current="page">Bookings</button>
       <button type="button" data-view="courses">Courses</button>
       <button type="button" data-view="settings">1-to-1 sessions</button>
+      <button type="button" data-view="media">Photos &amp; videos</button>
     </nav>
     <a class="btn sm" href="/" target="_blank" rel="noopener">View website ↗</a>
     <button class="btn sm" id="logout" type="button">Sign out</button>
@@ -191,6 +213,11 @@ a{color:var(--calm)}
   </section>
 
   <!-- ============ 1-TO-1 SETTINGS ============ -->
+  <section class="wrap" id="view-media" hidden>
+    <div class="page-head"><h2>Photos &amp; videos</h2></div>
+    <form id="media-form" class="editor" novalidate></form>
+  </section>
+
   <section class="wrap" id="view-settings" hidden>
     <div class="page-head"><h2>1-to-1 sessions</h2></div>
     <form id="session-form" class="editor" novalidate></form>

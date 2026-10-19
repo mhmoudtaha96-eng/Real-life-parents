@@ -1,5 +1,7 @@
 // Admin dashboard: bookings, courses (add / edit / show on site) and 1-to-1 settings.
 // Talks to worker/index.js → /api/admin/* with the admin password.
+import { parseVideo } from '../js/media/video.js';
+
 const KEY = 'rlp.admin';
 const TZ = 'Africa/Cairo';
 let pw = ''; try { pw = sessionStorage.getItem(KEY) || ''; } catch { /* private mode */ }
@@ -55,12 +57,13 @@ function setView(v) {
   dirty = false;
   view = v;
   $$('.nav [data-view]').forEach((b) => (b.getAttribute('data-view') === v ? b.setAttribute('aria-current', 'page') : b.removeAttribute('aria-current')));
-  for (const id of ['bookings', 'courses', 'settings']) $('#view-' + id).hidden = id !== v;
+  for (const id of ['bookings', 'courses', 'settings', 'media']) $('#view-' + id).hidden = id !== v;
   $('#savebar')?.remove();
   try { history.replaceState(null, '', '#' + v); } catch { /* */ }
   if (v === 'bookings') loadBookings();
   if (v === 'courses') { showCourseList(); loadCourses(); }
   if (v === 'settings') loadCourses().then(renderSessionForm);
+  if (v === 'media') loadCourses().then(renderMediaForm);
   window.scrollTo(0, 0);
 }
 $$('.nav [data-view]').forEach((b) => b.addEventListener('click', () => setView(b.getAttribute('data-view'))));
@@ -75,7 +78,7 @@ async function start() {
   renderPublishBar();
   $('#login').hidden = true; $('#app').hidden = false;
   const h = location.hash.slice(1);
-  setView(['bookings', 'courses', 'settings'].includes(h) ? h : 'bookings');
+  setView(['bookings', 'courses', 'settings', 'media'].includes(h) ? h : 'bookings');
 }
 
 /* =================================================================
@@ -193,6 +196,7 @@ function changeCount() {
   for (const c of store.courses || []) { const l = live.find((x) => x.id === c.id); if (!l || !same(c, l)) n++; }
   n += live.filter((l) => !(store.courses || []).some((c) => c.id === l.id)).length;
   if (store.live?.session && !same(store.session, store.live.session)) n++;
+  if (store.live?.coach && !same(store.coach, store.live.coach)) n++;
   return n;
 }
 function renderPublishBar() {
@@ -216,6 +220,7 @@ $('#apply').addEventListener('click', async () => {
   } catch { /* */ } finally { btn.disabled = false; }
   await loadCourses();
   if (view === 'settings') renderSessionForm();
+  if (view === 'media') renderMediaForm();
 });
 $('#discard').addEventListener('click', async () => {
   if (!confirm('Throw away all changes that are not on the website yet?\n\nCourses and 1-to-1 settings go back to what the website shows now. This cannot be undone.')) return;
@@ -224,6 +229,7 @@ $('#discard').addEventListener('click', async () => {
   await loadCourses();
   if (view === 'courses') { showCourseList(); renderCourseList(); }
   if (view === 'settings') renderSessionForm();
+  if (view === 'media') renderMediaForm();
 });
 
 /* one change at a time, so quick clicks never overwrite each other */
@@ -488,7 +494,7 @@ function addSaveBar(html) {
   bar.innerHTML = `<div class="wrap"><p class="err" id="save-err" role="alert"></p>${html}</div>`;
   document.body.append(bar);
   bar.addEventListener('click', (e) => {
-    if (e.target.closest('[data-cancel]')) { if (!dirty || confirm('Discard your changes?')) { dirty = false; view === 'courses' ? (showCourseList(), renderCourseList()) : renderSessionForm(); } }
+    if (e.target.closest('[data-cancel]')) { if (!dirty || confirm('Discard your changes?')) { dirty = false; view === 'courses' ? (showCourseList(), renderCourseList()) : view === 'media' ? renderMediaForm() : renderSessionForm(); } }
     if (e.target.closest('[data-preview]')) previewCourse();
   });
 }
@@ -748,6 +754,202 @@ sf.addEventListener('submit', async (e) => {
     toast('Saved. Click “Apply to website” to put it live.', 3500);
     loadCourses();
     renderSessionForm();
+  } catch { /* */ } finally { btn.disabled = false; }
+});
+
+
+/* =================================================================
+   PHOTOS & VIDEOS (coach profile photo, videos, photo album)
+   ================================================================= */
+let md = null; // the form's working copy of store.coach
+const mf = $('#media-form');
+
+/* ---------- image resizing in the browser, then upload ---------- */
+async function decode(file) {
+  try { return await createImageBitmap(file, { imageOrientation: 'from-image' }); } catch { /* try the slower way */ }
+  return new Promise((res, rej) => {
+    const u = URL.createObjectURL(file); const im = new Image();
+    im.onload = () => { res(im); setTimeout(() => URL.revokeObjectURL(u), 0); };
+    im.onerror = () => { URL.revokeObjectURL(u); rej(new Error('decode')); };
+    im.src = u;
+  });
+}
+function draw(img, w, h, crop) { // crop: { sx, sy, sw, sh }
+  const c = document.createElement('canvas'); c.width = w; c.height = h;
+  const g = c.getContext('2d'); g.imageSmoothingQuality = 'high';
+  const { sx = 0, sy = 0, sw = img.width, sh = img.height } = crop || {};
+  g.drawImage(img, sx, sy, sw, sh, 0, 0, w, h);
+  return new Promise((res) => c.toBlob((b) => {
+    if (b && b.type === 'image/webp') return res(b);
+    c.toBlob((j) => res(j), 'image/jpeg', 0.86); // browsers that can't make WebP
+  }, 'image/webp', 0.84));
+}
+async function upload(blob) {
+  const res = await fetch('/api/admin/media', { method: 'POST', body: blob, headers: { authorization: 'Bearer ' + pw, 'content-type': blob.type } });
+  if (res.status === 401) { showLogin('Wrong password.'); throw new Error('401'); }
+  if (res.status === 413) throw new Error('too_big');
+  if (!res.ok) throw new Error('upload');
+  return (await res.json()).url;
+}
+const fit = (w, h, max) => { const k = Math.min(1, max / Math.max(w, h)); return [Math.round(w * k), Math.round(h * k)]; };
+async function makeAlbumPhoto(file) {
+  const img = await decode(file);
+  const [w, h] = fit(img.width, img.height, 1600);
+  const [tw, th] = img.width >= img.height ? fit(img.width, img.height, 720) : fit(img.width, img.height, 900);
+  const [src, thumb] = await Promise.all([draw(img, w, h).then(upload), draw(img, tw, th).then(upload)]);
+  return { src, thumb, w, h, tw, th, caption: { ar: '', en: '' }, alt: { ar: '', en: '' } };
+}
+async function makeProfilePhoto(file) {
+  const img = await decode(file);
+  const side = Math.min(img.width, img.height);
+  // square from the middle (a little above centre, where faces usually are)
+  const crop = { sx: (img.width - side) / 2, sy: Math.max(0, (img.height - side) * 0.3), sw: side, sh: side };
+  const [src, small] = await Promise.all([draw(img, 560, 560, crop).then(upload), draw(img, 320, 320, crop).then(upload)]);
+  return { src, small };
+}
+const photoError = (e) => toast(e.message === 'too_big' ? 'That photo is too large. Try a smaller one.'
+  : e.message === 'decode' ? 'This photo type can’t be opened here. Use JPG or PNG (on iPhone: Settings → Camera → Formats → Most Compatible).'
+    : e.message === '401' ? 'Signed out' : 'Upload failed. Check the connection and try again.', 6000);
+
+/* ---------- form ---------- */
+function renderMediaForm(reset = true) {
+  if (reset || !md) md = clone(store.coach) || { photo: null, videos: [], album: [] };
+  md.videos ||= []; md.album ||= [];
+  const ph = md.photo;
+  mf.innerHTML = `
+    <p class="help" style="margin:0">Changes here are saved as a draft. Click <b>Apply to website</b> at the top to put them live.</p>
+    <div class="card"><h3>Profile photo</h3>
+      <p class="help">Shown in the coach section and on the 1-to-1 page. Any photo works: it is cropped to a circle and resized automatically.</p>
+      <div class="pp">
+        ${ph ? `<img src="${esc(ph.src)}" alt="Current profile photo">` : '<span class="pp-empty">No photo</span>'}
+        <div class="pp-actions">
+          <label class="btn sm primary" for="pp-file" style="display:inline-grid;place-items:center">${ph ? 'Change photo' : 'Upload photo'}</label>
+          <input type="file" id="pp-file" accept="image/*" hidden>
+          ${ph ? '<button class="btn sm danger" type="button" data-pp-remove>Remove</button>' : ''}
+        </div>
+      </div>
+    </div>
+    <div class="card"><h3>Videos</h3>
+      <p class="help">Paste a link to an Instagram reel or post, a YouTube video or Short, a TikTok or a Facebook video. The videos play on the page without leaving the site. The first video is shown first.</p>
+      <div class="vlist" id="vlist">${md.videos.map(videoRow).join('') || '<p class="help" data-none>No videos. The video area is hidden on the website.</p>'}</div>
+      <p style="margin:10px 0 0"><button class="btn sm" type="button" data-add-video>+ Add video</button></p>
+    </div>
+    <div class="card"><h3>Photo album</h3>
+      <p class="help">The first photo is shown big. Use the arrows to change the order. Captions are optional.</p>
+      <div class="alist" id="alist">${md.album.map(albumItem).join('')}</div>
+      <label class="drop" id="drop" for="album-file">
+        <b>+ Add photos</b><br>Click to choose (you can pick several), or drag photos here
+      </label>
+      <input type="file" id="album-file" accept="image/*" multiple hidden>
+    </div>`;
+  addSaveBar(`<button class="btn" type="button" data-cancel>Undo changes</button><a class="btn" href="/#watch" target="_blank" rel="noopener">View website ↗</a><button class="btn primary" type="submit" form="media-form">Save</button>`);
+  dirty = false;
+}
+function videoRow(v, i) {
+  const p = parseVideo(v.url);
+  const name = p ? ({ instagram: 'Instagram', youtube: 'YouTube', tiktok: 'TikTok', facebook: 'Facebook' })[p.provider] : '';
+  return `<div class="vrow" data-vi="${i}">
+    <div class="vprev${p && !p.vertical ? ' wide' : ''}">${p ? `<iframe src="${esc(p.embed)}" loading="lazy" title="Preview" allow="encrypted-media; picture-in-picture" scrolling="no"></iframe>` : (v.url ? 'Link not recognised' : 'Paste a link')}</div>
+    <div class="vfields">
+      <div class="item-head"><span class="lbl">Video ${i + 1}${name ? ` · ${name}` : ''}</span>
+        <button class="icon-btn" type="button" data-vmove="-1" aria-label="Move up">↑</button><button class="icon-btn" type="button" data-vmove="1" aria-label="Move down">↓</button><button class="icon-btn" type="button" data-vdel aria-label="Remove video">✕</button></div>
+      <label class="f"><span class="lbl">Video link</span><input data-vk="url" dir="ltr" value="${esc(v.url)}" placeholder="https://www.instagram.com/reel/…" inputmode="url"></label>
+      <label class="f"><span class="lbl">Caption (Arabic, optional)</span><input data-vk="ar" dir="rtl" value="${esc(v.caption?.ar)}"></label>
+      <label class="f"><span class="lbl">Caption (English, optional)</span><input data-vk="en" dir="ltr" value="${esc(v.caption?.en)}"></label>
+    </div>
+  </div>`;
+}
+function albumItem(a, i) {
+  return `<div class="aitem" data-ai="${i}">
+    <div class="item-head"><span class="lbl">${i === 0 ? 'Photo 1 (big)' : `Photo ${i + 1}`}</span>
+      <button class="icon-btn" type="button" data-amove="-1" aria-label="Move earlier">↑</button><button class="icon-btn" type="button" data-amove="1" aria-label="Move later">↓</button><button class="icon-btn" type="button" data-adel aria-label="Delete photo">✕</button></div>
+    <img src="${esc(a.thumb || a.src)}" alt="" loading="lazy" style="margin-top:8px">
+    <div class="afields">
+      <label class="f"><span class="lbl">Caption (Arabic)</span><input data-ak="ar" dir="rtl" value="${esc(a.caption?.ar)}"></label>
+      <label class="f"><span class="lbl">Caption (English)</span><input data-ak="en" dir="ltr" value="${esc(a.caption?.en)}"></label>
+    </div>
+  </div>`;
+}
+const redrawVideos = () => { $('#vlist').innerHTML = md.videos.map(videoRow).join('') || '<p class="help" data-none>No videos. The video area is hidden on the website.</p>'; };
+const redrawAlbum = () => { $('#alist').innerHTML = md.album.map(albumItem).join(''); };
+const move = (arr, i, d) => { const j = i + d; if (j < 0 || j >= arr.length) return false; [arr[i], arr[j]] = [arr[j], arr[i]]; return true; };
+
+let vT;
+mf.addEventListener('input', (e) => {
+  dirty = true;
+  const vr = e.target.closest('[data-vi]');
+  if (vr && e.target.dataset.vk) {
+    const v = md.videos[+vr.dataset.vi]; const k = e.target.dataset.vk;
+    if (k === 'url') {
+      v.url = e.target.value.trim();
+      e.target.classList.toggle('invalid', !!v.url && !parseVideo(v.url));
+      clearTimeout(vT); vT = setTimeout(() => { // refresh the preview only
+        const p = parseVideo(v.url); const box = vr.querySelector('.vprev');
+        box.className = 'vprev' + (p && !p.vertical ? ' wide' : '');
+        box.innerHTML = p ? `<iframe src="${esc(p.embed)}" loading="lazy" title="Preview" allow="encrypted-media; picture-in-picture" scrolling="no"></iframe>` : (v.url ? 'Link not recognised' : 'Paste a link');
+      }, 600);
+    } else { v.caption = { ...(v.caption || {}), [k]: e.target.value }; }
+  }
+  const ar = e.target.closest('[data-ai]');
+  if (ar && e.target.dataset.ak) { const a = md.album[+ar.dataset.ai]; a.caption = { ...(a.caption || {}), [e.target.dataset.ak]: e.target.value }; }
+});
+mf.addEventListener('click', (e) => {
+  const t = e.target;
+  if (t.closest('[data-pp-remove]')) { if (confirm('Remove the profile photo? Her initial will be shown instead.')) { md.photo = null; dirty = true; refreshPhoto(); } return; }
+  if (t.closest('[data-add-video]')) { md.videos.push({ url: '', caption: { ar: '', en: '' } }); redrawVideos(); $$('#vlist [data-vk=url]').pop()?.focus(); dirty = true; return; }
+  const vr = t.closest('[data-vi]');
+  if (vr && t.closest('[data-vdel]')) { md.videos.splice(+vr.dataset.vi, 1); redrawVideos(); dirty = true; return; }
+  if (vr && t.closest('[data-vmove]')) { if (move(md.videos, +vr.dataset.vi, +t.closest('[data-vmove]').dataset.vmove)) { redrawVideos(); dirty = true; } return; }
+  const ai = t.closest('[data-ai]');
+  if (ai && t.closest('[data-adel]')) { if (confirm('Delete this photo from the album?')) { md.album.splice(+ai.dataset.ai, 1); redrawAlbum(); dirty = true; } return; }
+  if (ai && t.closest('[data-amove]')) { if (move(md.album, +ai.dataset.ai, +t.closest('[data-amove]').dataset.amove)) { redrawAlbum(); dirty = true; } }
+});
+function refreshPhoto() { renderMediaForm(false); dirty = true; } // redraw with the new photo, keep other edits
+mf.addEventListener('change', async (e) => {
+  if (e.target.id === 'pp-file' && e.target.files[0]) {
+    const box = $('.pp', mf); box.classList.add('uploading'); toast('Uploading photo…', 20000);
+    try { md.photo = await makeProfilePhoto(e.target.files[0]); toast('Photo ready. Click Save, then Apply to website.', 4000); refreshPhoto(); }
+    catch (err) { photoError(err); box.classList.remove('uploading'); }
+    e.target.value = '';
+  }
+  if (e.target.id === 'album-file' && e.target.files.length) { await addAlbumFiles([...e.target.files]); e.target.value = ''; }
+});
+async function addAlbumFiles(files) {
+  files = files.filter((f) => f.type.startsWith('image/') || /\.(heic|heif)$/i.test(f.name));
+  if (!files.length) return;
+  const drop = $('#drop'); drop.classList.add('uploading');
+  let done = 0, failed = null;
+  for (const f of files) {
+    drop.innerHTML = `Uploading ${done + 1} of ${files.length}…`;
+    try { md.album.push(await makeAlbumPhoto(f)); done++; redrawAlbum(); dirty = true; } catch (err) { failed = err; }
+  }
+  drop.classList.remove('uploading');
+  drop.innerHTML = '<b>+ Add photos</b><br>Click to choose (you can pick several), or drag photos here';
+  if (failed) photoError(failed); else toast(`${done} photo${done > 1 ? 's' : ''} added. Click Save, then Apply to website.`, 4000);
+}
+mf.addEventListener('dragover', (e) => { const d = e.target.closest('#drop'); if (d) { e.preventDefault(); d.classList.add('over'); } });
+mf.addEventListener('dragleave', (e) => { e.target.closest('#drop')?.classList.remove('over'); });
+mf.addEventListener('drop', (e) => { const d = e.target.closest('#drop'); if (!d) return; e.preventDefault(); d.classList.remove('over'); addAlbumFiles([...e.dataTransfer.files]); });
+
+mf.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  md.videos = md.videos.filter((v) => v.url);
+  const bad = md.videos.findIndex((v) => !parseVideo(v.url));
+  if (bad >= 0) {
+    redrawVideos();
+    const el = $$('#vlist [data-vk=url]')[bad]; el.classList.add('invalid'); el.scrollIntoView({ block: 'center' }); el.focus();
+    $('#save-err').textContent = `Video ${bad + 1}: the link isn't an Instagram, YouTube, TikTok or Facebook video link.`;
+    return;
+  }
+  $('#save-err').textContent = '';
+  const btn = $('#savebar [type=submit]'); btn.disabled = true;
+  try {
+    const res = await api('/api/admin/settings/coach', { method: 'PUT', body: JSON.stringify(md) });
+    const b = await res.json().catch(() => ({}));
+    if (!res.ok) { $('#save-err').textContent = 'Could not save: check ' + (b.fields || []).join(', '); return; }
+    store.coach = b.coach; dirty = false;
+    toast('Saved. Click “Apply to website” to put it live.', 3500);
+    await loadCourses(); renderMediaForm();
   } catch { /* */ } finally { btn.disabled = false; }
 });
 

@@ -22,10 +22,14 @@
  *   POST  /api/admin/preview         render a course from the editor without saving
  *   POST  /api/admin/publish         "Apply to website": the edited courses + 1-to-1 settings go live
  *   POST  /api/admin/discard         throw away changes that were not applied
+ *   POST  /api/admin/media           upload a photo (body = the image) → { url }
+ *   PUT   /api/admin/settings/coach  coach photo, videos and photo album
+ * Public: GET /api/media/:id.webp    uploaded photos
  * Course and 1-to-1 edits are saved as a draft; visitors keep seeing the last applied version.
  */
 import generated from './content.generated.json' with { type: 'json' };
 import { createRenderer } from '../src/render/site.mjs';
+import { parseVideo } from '../src/assets/js/media/video.js';
 import { validateName, validatePhone, validateEmail, validateProblem } from '../src/assets/js/ui/validate.js';
 import { buildSlots } from '../src/assets/js/sessions.js';
 import { activeTier } from '../src/assets/js/commerce/pricing.js';
@@ -78,6 +82,8 @@ const SCHEMA = [
     updated_at TEXT
   )`,
   'CREATE TABLE IF NOT EXISTS settings (key TEXT PRIMARY KEY, data TEXT NOT NULL, updated_at TEXT)',
+  // photos uploaded in /admin/ (profile photo, album)
+  'CREATE TABLE IF NOT EXISTS media (id TEXT PRIMARY KEY, mime TEXT NOT NULL, data BLOB NOT NULL, size INTEGER, created_at TEXT)',
 ];
 let schemaReady = null;
 function ensureSchema(db) {
@@ -104,6 +110,10 @@ async function seedContent(db) {
   if (!sset && seed.session) {
     await db.prepare("INSERT OR IGNORE INTO settings (key, data, updated_at) VALUES ('session', ?, ?)").bind(JSON.stringify(seed.session), nowIso()).run();
   }
+  const cset = await db.prepare("SELECT key FROM settings WHERE key = 'coach'").first();
+  if (!cset && seed.coach) {
+    await db.prepare("INSERT OR IGNORE INTO settings (key, data, updated_at) VALUES ('coach', ?, ?)").bind(JSON.stringify(seed.coach), nowIso()).run();
+  }
 }
 
 /** Draft = what the admin is editing (courses + settings tables). Not shown on the site until "Apply". */
@@ -113,14 +123,15 @@ async function loadDraft(env) {
   const { results } = await env.DB.prepare('SELECT * FROM courses ORDER BY sort ASC, created_at ASC').all();
   const courses = results.map((r) => ({ ...JSON.parse(r.data), id: r.id, slug: r.slug, visible: !!r.visible, featured: !!r.featured, sort: r.sort }));
   const sRow = await env.DB.prepare("SELECT data FROM settings WHERE key = 'session'").first();
-  return { courses, session: sRow ? JSON.parse(sRow.data) : seed.session };
+  const cRow = await env.DB.prepare("SELECT data FROM settings WHERE key = 'coach'").first();
+  return { courses, session: sRow ? JSON.parse(sRow.data) : seed.session, coach: cRow ? JSON.parse(cRow.data) : seed.coach };
 }
 
 /** Live = the snapshot saved by the last "Apply to website". This is what visitors see and can book. */
 async function loadPublished(env) {
   await ensureSchema(env.DB);
   const row = await env.DB.prepare("SELECT data, updated_at FROM settings WHERE key = 'published'").first();
-  if (row) return { ...JSON.parse(row.data), publishedAt: row.updated_at };
+  if (row) { const d = JSON.parse(row.data); return { ...d, coach: d.coach || seed.coach, publishedAt: row.updated_at }; }
   // first run: what is in the database now goes live
   const draft = await loadDraft(env);
   const at = nowIso();
@@ -137,13 +148,14 @@ const invalidateContent = () => { contentCache = null; };
 
 /** Same content? (ignores key order inside objects) */
 const canon = (v) => (Array.isArray(v) ? v.map(canon) : v && typeof v === 'object' ? Object.fromEntries(Object.keys(v).sort().map((k) => [k, canon(v[k])])) : v);
-const sameContent = (a, b) => JSON.stringify(canon({ courses: a.courses, session: a.session })) === JSON.stringify(canon({ courses: b.courses, session: b.session }));
+const sameContent = (a, b) => JSON.stringify(canon({ courses: a.courses, session: a.session, coach: a.coach })) === JSON.stringify(canon({ courses: b.courses, session: b.session, coach: b.coach }));
 
 async function publishDraft(env) {
   const draft = await loadDraft(env);
   await env.DB.prepare("INSERT INTO settings (key, data, updated_at) VALUES ('published', ?, ?) ON CONFLICT(key) DO UPDATE SET data = excluded.data, updated_at = excluded.updated_at")
     .bind(JSON.stringify(draft), nowIso()).run();
   invalidateContent();
+  await cleanupMedia(env, [draft.coach]);
   return json({ ok: true });
 }
 
@@ -157,8 +169,86 @@ async function discardDraft(env) {
       .bind(c.id, c.slug, JSON.stringify(data), visible ? 1 : 0, featured ? 1 : 0, sort ?? 0, nowIso(), nowIso()));
   }
   if (live.session) stmts.push(env.DB.prepare("INSERT INTO settings (key, data, updated_at) VALUES ('session', ?, ?) ON CONFLICT(key) DO UPDATE SET data = excluded.data, updated_at = excluded.updated_at").bind(JSON.stringify(live.session), nowIso()));
+  if (live.coach) stmts.push(env.DB.prepare("INSERT INTO settings (key, data, updated_at) VALUES ('coach', ?, ?) ON CONFLICT(key) DO UPDATE SET data = excluded.data, updated_at = excluded.updated_at").bind(JSON.stringify(live.coach), nowIso()));
   await env.DB.batch(stmts);
   return json({ ok: true });
+}
+
+/* ---------------- photos uploaded in /admin/ ---------------- */
+const MEDIA_RE = /^\/api\/media\/([a-z0-9]{16,40})\.(webp|jpg|png)$/;
+const ASSET_IMG_RE = /^\/assets\/img\/[\w\/.-]+\.(webp|jpg|jpeg|png)$/;
+const okImagePath = (p) => typeof p === 'string' && (MEDIA_RE.test(p) || ASSET_IMG_RE.test(p));
+const MAX_MEDIA_BYTES = 1_900_000; // a database row holds up to 2 MB
+
+async function uploadMedia(request, env) {
+  const mime = (request.headers.get('content-type') || '').split(';')[0].trim();
+  const ext = { 'image/webp': 'webp', 'image/jpeg': 'jpg', 'image/png': 'png' }[mime];
+  if (!ext) return json({ error: 'type' }, 415);
+  const buf = new Uint8Array(await request.arrayBuffer());
+  if (!buf.length) return json({ error: 'empty' }, 400);
+  if (buf.length > MAX_MEDIA_BYTES) return json({ error: 'too_big' }, 413);
+  await ensureSchema(env.DB);
+  const id = Array.from(crypto.getRandomValues(new Uint8Array(12))).map((b) => b.toString(16).padStart(2, '0')).join('');
+  await env.DB.prepare('INSERT INTO media (id, mime, data, size, created_at) VALUES (?, ?, ?, ?, ?)').bind(id, mime, buf, buf.length, nowIso()).run();
+  return json({ ok: true, url: `/api/media/${id}.${ext}` }, 201);
+}
+
+async function serveMedia(env, id) {
+  await ensureSchema(env.DB);
+  const row = await env.DB.prepare('SELECT mime, data FROM media WHERE id = ?').bind(id).first();
+  if (!row) return new Response('Not found', { status: 404 });
+  const body = row.data instanceof ArrayBuffer ? row.data : new Uint8Array(row.data);
+  return new Response(body, { headers: { 'content-type': row.mime, 'cache-control': 'public, max-age=31536000, immutable', 'x-content-type-options': 'nosniff' } });
+}
+
+/** After "Apply": delete uploaded photos that neither the website nor the draft uses (older than a day) */
+async function cleanupMedia(env, extra = []) {
+  try {
+    const live = await loadPublished(env);
+    const used = new Set();
+    const collect = (c) => {
+      if (!c) return;
+      for (const p of [c.photo?.src, c.photo?.small, ...(c.album || []).flatMap((a) => [a.src, a.thumb])]) {
+        const m = typeof p === 'string' && p.match(MEDIA_RE); if (m) used.add(m[1]);
+      }
+    };
+    [live.coach, ...extra].forEach(collect);
+    const cutoff = new Date(Date.now() - 864e5).toISOString();
+    const { results } = await env.DB.prepare('SELECT id FROM media WHERE created_at < ?').bind(cutoff).all();
+    const unused = results.map((r) => r.id).filter((id) => !used.has(id));
+    if (unused.length) await env.DB.batch(unused.map((id) => env.DB.prepare('DELETE FROM media WHERE id = ?').bind(id)));
+  } catch (e) { console.error('media cleanup', e); }
+}
+
+/** Save the coach photo, videos and album (draft) */
+async function saveCoach(request, env) {
+  const body = await request.json().catch(() => ({}));
+  const str = (x, n = 300) => (typeof x === 'string' ? x.trim().slice(0, n) : '');
+  const two = (o) => ({ ar: str(o?.ar), en: str(o?.en) });
+  const errors = [];
+  let photo = null;
+  if (body.photo) {
+    if (okImagePath(body.photo.src) && (!body.photo.small || okImagePath(body.photo.small))) photo = { src: body.photo.src, small: body.photo.small || body.photo.src };
+    else errors.push('photo');
+  }
+  const videos = [];
+  for (const v of (Array.isArray(body.videos) ? body.videos : []).slice(0, 12)) {
+    const p = parseVideo(v?.url);
+    if (!p) { errors.push('video'); continue; }
+    videos.push({ url: p.url, caption: two(v.caption) });
+  }
+  const album = [];
+  for (const a of (Array.isArray(body.album) ? body.album : []).slice(0, 60)) {
+    if (!okImagePath(a?.src) || (a.thumb && !okImagePath(a.thumb))) { errors.push('album'); continue; }
+    const n = (x) => Math.max(1, Math.min(10000, Math.round(Number(x) || 0)));
+    album.push({ src: a.src, thumb: a.thumb || a.src, w: n(a.w), h: n(a.h), tw: n(a.tw || a.w), th: n(a.th || a.h), caption: two(a.caption), alt: two(a.alt) });
+  }
+  if (errors.length) return json({ error: 'invalid', fields: [...new Set(errors)] }, 400);
+  const coach = { photo, videos, album };
+  await ensureSchema(env.DB);
+  await env.DB.prepare("INSERT INTO settings (key, data, updated_at) VALUES ('coach', ?, ?) ON CONFLICT(key) DO UPDATE SET data = excluded.data, updated_at = excluded.updated_at")
+    .bind(JSON.stringify(coach), nowIso()).run();
+  return json({ ok: true, coach });
 }
 
 /** Free 1-to-1 times held by bookings that were never paid */
@@ -458,7 +548,7 @@ function validateCourse(input, existingId, takenSlugs) {
 async function adminCourses(env) {
   const draft = await loadDraft(env);
   const live = await loadPublished(env);
-  return { courses: draft.courses, session: draft.session, live: { courses: live.courses, session: live.session, publishedAt: live.publishedAt }, pending: !sameContent(draft, live) };
+  return { courses: draft.courses, session: draft.session, coach: draft.coach, live: { courses: live.courses, session: live.session, coach: live.coach, publishedAt: live.publishedAt }, pending: !sameContent(draft, live) };
 }
 
 async function saveCourse(request, env, id) {
@@ -626,6 +716,8 @@ export default {
       let m = pathname.match(/^\/api\/orders\/(RLP-[A-Z0-9-]+)\/payment$/);
       if (m && request.method === 'POST') return await claimPayment(request, env, m[1]);
       if (pathname === '/api/slots' && request.method === 'GET') return await takenSlots(env);
+      m = pathname.match(MEDIA_RE);
+      if (m && (request.method === 'GET' || request.method === 'HEAD')) return await serveMedia(env, m[1]);
 
       if (pathname.startsWith('/api/admin/')) {
         if (!env.ADMIN_PASSWORD) return json({ error: 'admin_not_configured' }, 503);
@@ -647,6 +739,8 @@ export default {
         if (pathname === '/api/admin/preview' && request.method === 'POST') return await previewCourse(request, env);
         if (pathname === '/api/admin/publish' && request.method === 'POST') return await publishDraft(env);
         if (pathname === '/api/admin/discard' && request.method === 'POST') return await discardDraft(env);
+        if (pathname === '/api/admin/media' && request.method === 'POST') return await uploadMedia(request, env);
+        if (pathname === '/api/admin/settings/coach' && request.method === 'PUT') return await saveCoach(request, env);
       }
       return json({ error: 'not_found' }, 404);
     } catch (e) {

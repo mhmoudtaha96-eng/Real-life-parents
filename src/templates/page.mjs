@@ -323,7 +323,7 @@ function includes(ctx) {
 function coach(ctx) {
   const { ins, instructor, lang, rel } = ctx;
   const photo = instructor.photo
-    ? `<img class="coach-photo" src="${rel}${instructor.photo.replace(/^\//, '')}" srcset="${rel}${instructor.photo.replace(/^\//, '').replace('.webp', '-320.webp')} 320w, ${rel}${instructor.photo.replace(/^\//, '')} 560w" sizes="240px" alt="${esc(ins.photoAlt || ins.name)}" width="560" height="560" loading="lazy" decoding="async">`
+    ? `<img class="coach-photo" src="${rel}${instructor.photo.replace(/^\//, '')}" srcset="${rel}${(instructor.photoSmall || instructor.photo).replace(/^\//, '')} 320w, ${rel}${instructor.photo.replace(/^\//, '')} 560w" sizes="240px" alt="${esc(ins.photoAlt || ins.name)}" width="560" height="560" loading="lazy" decoding="async">`
     : `<div class="coach-photo coach-monogram" role="img" aria-label="${esc(ins.name)}"><span>${esc(ins.monogram)}</span></div>`;
   return `<section class="section coach" id="coach" aria-labelledby="coach-title">
   <div class="wrap coach-grid">
@@ -353,22 +353,23 @@ function media(ctx) {
   const m = instructor.media || {};
   const M = t.media;
   const img = (p) => rel + p.replace(/^\//, '');
-  const v = m.video || {};
-  let video = '';
-  if (v.mp4) {
-    video = `<video class="reel-video" controls playsinline preload="none" ${v.poster ? `poster="${img(v.poster)}"` : ''} width="720" height="1280">
-      <source src="${img(v.mp4)}" type="video/mp4"></video>`;
-  } else if (v.instagram) {
-    video = `<iframe class="reel-frame" src="https://www.instagram.com/reel/${esc(v.instagram)}/embed/" title="${esc(M.videoTitle)}"
-      loading="lazy" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen scrolling="no"></iframe>`;
-  }
+  const videos = (m.videos || []).map((v) => {
+    const cap = (v.caption && (v.caption[lang] || v.caption.ar)) || '';
+    return `<figure class="reel${v.vertical ? '' : ' reel-wide'}">
+        <div class="reel-phone">
+          <iframe class="reel-frame" src="${esc(v.embed)}" title="${esc(cap || M.videoTitle)}" loading="lazy"
+            allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen scrolling="no"></iframe>
+        </div>
+        ${cap || m.videos.length === 1 ? `<figcaption>${esc(cap || M.videoCaption)}</figcaption>` : ''}
+      </figure>`;
+  });
   const album = (m.album || []).map((a, i) => `<li class="album-item album-${a.shape || 'land'}">
       <button type="button" class="album-btn" data-album-index="${i}" aria-label="${esc(M.open)}: ${esc(a.caption[lang])}">
-        <img src="${img(a.thumb)}" alt="${esc(a.alt[lang])}" width="${a.tw}" height="${a.th}" loading="lazy" decoding="async">
+        <img src="${img(a.thumb)}" alt="${esc(a.alt[lang])}" width="${a.tw || ''}" height="${a.th || ''}" loading="lazy" decoding="async">
       </button>
-      <span class="album-cap">${esc(a.caption[lang])}</span>
+      ${a.caption[lang] ? `<span class="album-cap">${esc(a.caption[lang])}</span>` : ''}
     </li>`).join('');
-  if (!video && !album) return '';
+  if (!videos.length && !album) return '';
   const albumData = JSON.stringify((m.album || []).map((a) => ({ src: img(a.src), w: a.w, h: a.h, alt: a.alt[lang], caption: a.caption[lang] }))).replace(/</g, '\\u003c');
   return `<section class="section media" id="watch" aria-labelledby="media-title">
   <div class="wrap">
@@ -376,11 +377,8 @@ function media(ctx) {
       <h2 id="media-title" class="h2">${esc(M.title)}</h2>
       <p>${esc(M.intro)}</p>
     </div>
-    <div class="media-grid">
-      ${video ? `<figure class="reel">
-        <div class="reel-phone">${video}</div>
-        <figcaption>${esc(M.videoCaption)}</figcaption>
-      </figure>` : ''}
+    <div class="media-grid${videos.length > 1 ? ' media-many' : ''}${!videos.length || !album ? ' media-one' : ''}">
+      ${videos.length ? `<div class="reels">${videos.join('')}</div>` : ''}
       ${album ? `<div class="album">
         <h3 class="album-title">${esc(M.albumTitle)}</h3>
         <ul class="album-grid">${album}</ul>

@@ -20,7 +20,7 @@ export function sessionPage(ctx) {
   const { _note, content, ...availability } = session;
 
   const photo = instructor.photo
-    ? `<img class="ses-photo" src="${rel}${instructor.photo.replace(/^\//, '').replace('.webp', '-320.webp')}" alt="${esc(ins.photoAlt || ins.name)}" width="320" height="320" decoding="async">`
+    ? `<img class="ses-photo" src="${rel}${(instructor.photoSmall || instructor.photo).replace(/^\//, '')}" alt="${esc(ins.photoAlt || ins.name)}" width="320" height="320" decoding="async">`
     : '';
 
   const body = `

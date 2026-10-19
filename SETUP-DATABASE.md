@@ -29,6 +29,7 @@ You don't need to create any tables. The site creates them by itself on the firs
 
 - **Courses**: add a new course (it starts filled in from course #1), edit, duplicate, delete, change the order, tick **Show on website** to show or hide it, and pick which course is the **Home page**.
 - Changes in **Courses** and **1-to-1 sessions** are saved as a draft. Click **Apply to website** (yellow bar at the top) to put them live, or **Discard changes** to throw them away.
+- **Photos & videos**: profile photo, video links and the photo album.
 - **1-to-1 sessions**: price, session length, the workshop discount (%, which workshop, how many days it's valid, first session only), weekly times, days off, extra one-off times and the page text.
 
 You can also see the raw data in Cloudflare: **Storage & Databases → D1 → rlp-bookings**, then open the tables view, table `orders` (bookings), `courses` and `settings`.
