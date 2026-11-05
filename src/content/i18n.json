@@ -230,6 +230,13 @@
       "branch": "الفرع",
       "note": "لو بتحوّلي من برا مصر استخدمي الـIBAN والـSwift Code. اكتبي رقم الحجز في بيان التحويل لو أمكن."
     },
+    "home": {
+      "kicker": "Real Life Parents مع شيرين جندي",
+      "title": "تربية هادية وحدود واضحة، من غير صريخ",
+      "text": "ورش وجلسات فردية أونلاين للأمهات مع شيرين جندي، كوتش تربية معتمدة وأخصائية تعديل سلوك. خطوات عملية تساعدك تتعاملي مع العند ونوبات الغضب بهدوء.",
+      "meet": "اتعرفي على شيرين",
+      "words": ["هدوء", "حدود", "تواصل"]
+    },
     "empty": {
       "title": "مفيش ورش مفتوحة للحجز دلوقتي",
       "text": "تابعينا على إنستجرام عشان تعرفي أول ما نعلن عن الورشة الجاية، أو احجزي جلسة فردية مع شيرين."
@@ -465,6 +472,13 @@
       "swift": "Swift code",
       "branch": "Branch",
       "note": "Transferring from outside Egypt? Use the IBAN and Swift code. Add your booking ref to the transfer reference if you can."
+    },
+    "home": {
+      "kicker": "Real Life Parents with Shereen Gendy",
+      "title": "Calm parenting and clear limits, without the shouting",
+      "text": "Online workshops and 1-to-1 sessions for mothers with Shereen Gendy, a certified parenting coach and behaviour specialist. Practical steps to handle defiance and tantrums calmly.",
+      "meet": "Meet Shereen",
+      "words": ["Calm", "Limits", "Connection"]
     },
     "empty": {
       "title": "No workshops are open for booking right now",

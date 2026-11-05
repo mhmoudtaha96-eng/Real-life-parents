@@ -9,7 +9,7 @@
  *   session: {…}            1-to-1 settings (same shape as src/content/sessions/one-to-one.json)
  * }
  */
-import { coursePage, layout, header, footer } from '../templates/page.mjs';
+import { coursePage, homePage } from '../templates/page.mjs';
 import { sessionPage } from '../templates/session.mjs';
 import { activeTier, esc } from '../templates/helpers.mjs';
 import { parseVideo } from '../assets/js/media/video.js';
@@ -128,28 +128,38 @@ export function createRenderer({ site, i18n, instructors, qrPath = '', assetVers
       }));
     }
 
-    // No course is visible right now: a simple page pointing to the 1-to-1 sessions
+    // No course is shown right now (e.g. the workshop is full): the home page keeps the coach,
+    // her videos and photos and the 1-to-1 sessions; course details and booking are hidden.
     const selfRoutes = Object.fromEntries(site.languages.map((l) => [l, langPrefix(l)]));
+    const H = t.home;
+    const base = site.siteUrl;
+    const jsonld = JSON.stringify({
+      '@context': 'https://schema.org',
+      '@graph': [
+        { '@type': 'Organization', '@id': `${base}/#org`, name: site.brand, url: `${base}/`, logo: `${base}/assets/img/logo-512.png`, sameAs: [site.social.instagram] },
+        { '@type': 'Person', '@id': `${base}/#${instructor.id}`, name: common.ins.name, jobTitle: common.ins.jobTitle, ...(instructor.photo ? { image: base + instructor.photo } : {}), sameAs: instructor.sameAs || [] },
+        { '@type': 'WebPage', '@id': abs(route), url: abs(route), name: `${H.title} | ${site.brand}`, inLanguage: lang, about: { '@id': `${base}/#${instructor.id}` }, publisher: { '@id': `${base}/#org` } },
+      ],
+    }).replace(/</g, '\\u003c');
     const ctx = {
-      ...common, course: { seo: { [lang]: { title: site.brand, description: t.empty.text } } }, c: { name: site.brand, kicker: '' },
-      seo: { title: `${site.brand}`, description: t.empty.text },
+      ...common, noCourse: true, hasMedia: !!(instructor.media?.videos?.length || instructor.media?.album?.length),
+      course: { seo: { [lang]: { title: `${H.title} | ${site.brand}`, description: H.text } } }, c: { name: H.title, kicker: H.kicker },
+      seo: { title: `${H.title} | ${site.brand}`, description: H.text },
       url: abs(route), alternates: Object.fromEntries(site.languages.map((l) => [l, abs(selfRoutes[l])])),
       links: baseLinks(route, lang, content, selfRoutes),
-      products: [], jsonld: '{}', headerCta: ' ',
+      products: [], jsonld,
+      headerCta: content.session ? `<a class="btn btn-primary btn-sm" href="${relLink(route, sessionRoute(content.session, lang))}">${esc(t.session.navShort || t.nav.session)}</a>` : ' ',
     };
-    return stamp(layout(ctx, `${header(ctx)}<main id="main" class="wrap notfound">
-      <h1 class="h2">${esc(t.empty.title)}</h1><p>${esc(t.empty.text)}</p>
-      ${content.session ? `<p><a class="btn btn-primary btn-lg" href="${ctx.links.session[lang]}">${esc(t.session.ctaFromCoach)}</a></p>` : ''}
-    </main>${footer(ctx)}`));
+    return stamp(homePage(ctx));
   }
 
   function sitemap(content, now = new Date()) {
     const today = now.toISOString().slice(0, 10);
-    const pages = routes(content).filter((p) => p.kind !== 'empty' && p.lang === site.defaultLang);
+    const pages = routes(content).filter((p) => p.lang === site.defaultLang);
     const { featured } = visibleCourses(content);
     const entries = pages.map((p) => {
       const alts = site.languages.map((l) => {
-        const r = p.kind === 'course' ? courseRoute(p.course, l, featured) : sessionRoute(content.session, l);
+        const r = p.kind === 'course' ? courseRoute(p.course, l, featured) : p.kind === 'empty' ? langPrefix(l) : sessionRoute(content.session, l);
         return [l, abs(r)];
       });
       const prio = p.route === '' ? '1.0' : p.kind === 'session' ? '0.9' : '0.8';

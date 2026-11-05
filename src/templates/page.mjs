@@ -32,6 +32,47 @@ ${checkoutDialog(ctx)}
 `);
 }
 
+/**
+ * Home page while no course is shown on the site (e.g. the workshop is full):
+ * the coach, her videos and photos and the 1-to-1 sessions stay; course details and booking are hidden.
+ */
+export function homePage(ctx) {
+  const { t, lang, site, ins, links } = ctx;
+  const H = t.home;
+  return layout(ctx, `
+${header(ctx)}
+<main id="main">
+<section class="hero hero-home" aria-labelledby="hero-title">
+  <div class="wrap hero-grid">
+    <div class="hero-copy">
+      <p class="hero-kicker">${esc(H.kicker)}</p>
+      <h1 id="hero-title" class="hero-title">${esc(H.title)}</h1>
+      <p class="hero-tagline">${esc(H.text)}</p>
+      <div class="hero-ctas">
+        <a class="btn btn-primary btn-lg" href="${links.session[lang]}">${icons.calendar}<span>${esc(t.session.ctaFromCoach)}</span></a>
+        <a class="btn btn-ghost btn-lg" href="#coach">${esc(H.meet)}</a>
+      </div>
+    </div>
+    <div class="hero-visual">${heroArt({ words: H.words, dir: t.dir })}</div>
+  </div>
+</section>
+${coach(ctx)}
+${media(ctx)}
+<section class="section closed" id="workshops" aria-labelledby="closed-title">
+  <div class="wrap closed-inner">
+    <h2 id="closed-title" class="h2">${esc(t.empty.title)}</h2>
+    <p>${esc(t.empty.text)}</p>
+    <div class="hero-ctas">
+      <a class="btn btn-sun btn-lg" href="${links.session[lang]}">${icons.calendar}<span>${esc(t.session.ctaFromCoach)}</span></a>
+      <a class="btn btn-ghost btn-lg" href="${site.social.instagram}" target="_blank" rel="noopener">${icons.ig}<span>${esc(t.followIg)}</span></a>
+    </div>
+  </div>
+</section>
+</main>
+${footer(ctx)}
+`);
+}
+
 /* ---------- document shell ---------- */
 export function layout(ctx, body) {
   const { site, t, lang, course, c, url, alternates, rel, preview } = ctx;
@@ -151,12 +192,13 @@ export function header(ctx) {
       <span class="brand-name">Real Life <b>Parents</b></span>
     </a>
     <nav class="main-nav" aria-label="${lang === 'ar' ? 'روابط الصفحة' : 'Page sections'}">
-      <a href="${nb}#learn">${t.nav.learn}</a>
+      ${ctx.noCourse ? `<a href="${nb}#coach">${t.nav.coach}</a>
+      ${ctx.hasMedia ? `<a href="${nb}#watch">${t.nav.watch}</a>` : ''}` : `<a href="${nb}#learn">${t.nav.learn}</a>
       <a href="${nb}#coach">${t.nav.coach}</a>
-      <a href="${nb}#details">${t.nav.details}</a>
+      <a href="${nb}#details">${t.nav.details}</a>`}
       ${ctx.otherCourses?.length ? `<a href="#courses">${t.nav.courses}</a>` : ''}
       <a href="${links.session[lang]}"${ctx.isSessionPage ? ' aria-current="page"' : ''}>${t.nav.session}</a>
-      <a href="${nb}#faq">${t.nav.faq}</a>
+      ${ctx.noCourse ? '' : `<a href="${nb}#faq">${t.nav.faq}</a>`}
     </nav>
     <div class="header-actions">
       <a class="lang-switch" href="${links.self[other]}" hreflang="${other}" lang="${other}">${icons.globe}<span>${t.switchTo}</span></a>
@@ -170,10 +212,11 @@ export function header(ctx) {
   <nav class="site-menu" id="site-menu" aria-label="${esc(t.nav.menu)}" hidden>
     <div class="wrap">
       <ul class="menu-list">
-        ${[
-          ['learn', t.nav.learn], ['includes', t.nav.includes], ['coach', t.nav.coach],
-          ['watch', t.nav.watch], ['details', t.nav.details], ...(ctx.otherCourses?.length ? [['courses', t.nav.courses]] : []), ['faq', t.nav.faq],
-        ].map(([id, label]) => `<li><a href="${nb}#${id}" data-menu-link>${esc(label)}</a></li>`).join('')}
+        ${(ctx.noCourse
+          ? [['coach', t.nav.coach], ...(ctx.hasMedia ? [['watch', t.nav.watch]] : [])]
+          : [['learn', t.nav.learn], ['includes', t.nav.includes], ['coach', t.nav.coach],
+            ['watch', t.nav.watch], ['details', t.nav.details], ...(ctx.otherCourses?.length ? [['courses', t.nav.courses]] : []), ['faq', t.nav.faq]]
+        ).map(([id, label]) => `<li><a href="${nb}#${id}" data-menu-link>${esc(label)}</a></li>`).join('')}
         <li><a class="menu-session" href="${links.session[lang]}" data-menu-link${ctx.isSessionPage ? ' aria-current="page"' : ''}>${icons.calendar}<span>${esc(t.nav.session)}</span></a></li>
       </ul>
       <div class="menu-foot">
